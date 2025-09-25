@@ -1,0 +1,33 @@
+{
+  "category": "pricing",
+  "description": "Pricing tables and subscription sections",
+  "components": [
+    {
+      "id": "shadcn-pricing6",
+      "name": "Single Plan Pricing Card",
+      "description": "Clean single pricing plan with feature list, prominent pricing, and trial offer",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/pricing6",
+      "dependencies": ["button"],
+      "complexity": "low",
+      "styleNotes": "Clean card design with prominent price display, feature list with checkmarks, and clear CTA button."
+    },
+    {
+      "id": "shadcn-pricing2",
+      "name": "Dual Plan Pricing Comparison",
+      "description": "Two-tier pricing comparison with monthly/yearly toggle and detailed feature comparison",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/pricing2",
+      "dependencies": ["button", "toggle"],
+      "complexity": "medium",
+      "styleNotes": "Clean comparison layout with toggle switch, side-by-side plan cards, and clear feature differentiation."
+    },
+    {
+      "id": "shadcn-pricing4",
+      "name": "Three-Tier Pricing Table",
+      "description": "Comprehensive three-tier pricing table with FREE, PRO, and Elite plans, monthly/yearly toggle, and detailed feature comparison",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/pricing4",
+      "dependencies": ["button", "toggle"],
+      "complexity": "high",
+      "styleNotes": "Comprehensive three-column pricing layout with clear tier differentiation, badges, and detailed feature lists."
+    }
+  ]
+} 

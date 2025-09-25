@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3714 753" preserveAspectRatio="xMidYMid" width="100%" height="100%" style="shape-rendering: auto; display: block;" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg-gradient-curve5top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--background)"/>
+      <stop offset="1" stop-color="var(--muted)"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background rectangle -->
+  <rect fill="url(#bg-gradient-curve5top)" width="3714" height="753"/>
+  
+  <g style="transform:translate(1857px,376.5px) scale(1,-1) translate(-1857px,-376.5px)">
+    <!-- Left side waves - layer 1 (bottom) with 0.4 opacity -->
+    <path opacity="0.4" fill="var(--primary)" d="">
+      <animate values="M0 0L0 439.12Q309.50 413.59 619 368.20T1238 282.63T1857 260.42L1857 0Z;M0 0L0 459.83Q309.50 393.39 619 358.18T1238 308.83T1857 301.32L1857 0Z;M0 0L0 431.35Q309.50 409.39 619 389.82T1238 337.53T1857 234.55L1857 0Z;M0 0L0 439.12Q309.50 413.59 619 368.20T1238 282.63T1857 260.42L1857 0Z" begin="0s" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" calcMode="spline" keyTimes="0;0.333;0.667;1" repeatCount="indefinite" dur="20s" attributeName="d"/>
+    </path>
+    <!-- Left side waves - layer 2 (middle) with 0.6 opacity -->
+    <path opacity="0.6" fill="var(--primary)" d="">
+      <animate values="M0 0L0 461.34Q309.50 386.20 619 361.23T1238 317.38T1857 240.79L1857 0Z;M0 0L0 444.81Q309.50 385.10 619 355.42T1238 346.89T1857 263.56L1857 0Z;M0 0L0 396.37Q309.50 433.89 619 401.37T1238 280.38T1857 239.09L1857 0Z;M0 0L0 461.34Q309.50 386.20 619 361.23T1238 317.38T1857 240.79L1857 0Z" begin="-6.666666666666667s" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" calcMode="spline" keyTimes="0;0.333;0.667;1" repeatCount="indefinite" dur="20s" attributeName="d"/>
+    </path>
+    <!-- Left side waves - layer 3 (top) with 1.0 opacity -->
+    <path opacity="1.0" fill="var(--primary)" d="">
+      <animate values="M0 0L0 446.42Q309.50 348.95 619 328.23T1238 320.74T1857 296.12L1857 0Z;M0 0L0 464.97Q309.50 399.41 619 361.94T1238 291.78T1857 271.56L1857 0Z;M0 0L0 423.86Q309.50 417.89 619 374.41T1238 304.75T1857 298.01L1857 0Z;M0 0L0 446.42Q309.50 348.95 619 328.23T1238 320.74T1857 296.12L1857 0Z" begin="-13.333333333333334s" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" calcMode="spline" keyTimes="0;0.333;0.667;1" repeatCount="indefinite" dur="20s" attributeName="d"/>
+    </path>
+    
+    <!-- Right side waves (mirrored) -->
+    <g transform="translate(3714, 0) scale(-1, 1)">
+      <!-- layer 1 (bottom) with 0.4 opacity -->
+      <path opacity="0.4" fill="var(--primary)" d="">
+        <animate values="M0 0L0 439.12Q309.50 413.59 619 368.20T1238 282.63T1857 260.42L1857 0Z;M0 0L0 459.83Q309.50 393.39 619 358.18T1238 308.83T1857 301.32L1857 0Z;M0 0L0 431.35Q309.50 409.39 619 389.82T1238 337.53T1857 234.55L1857 0Z;M0 0L0 439.12Q309.50 413.59 619 368.20T1238 282.63T1857 260.42L1857 0Z" begin="0s" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" calcMode="spline" keyTimes="0;0.333;0.667;1" repeatCount="indefinite" dur="20s" attributeName="d"/>
+      </path>
+      <!-- layer 2 (middle) with 0.6 opacity -->
+      <path opacity="0.6" fill="var(--primary)" d="">
+        <animate values="M0 0L0 461.34Q309.50 386.20 619 361.23T1238 317.38T1857 240.79L1857 0Z;M0 0L0 444.81Q309.50 385.10 619 355.42T1238 346.89T1857 263.56L1857 0Z;M0 0L0 396.37Q309.50 433.89 619 401.37T1238 280.38T1857 239.09L1857 0Z;M0 0L0 461.34Q309.50 386.20 619 361.23T1238 317.38T1857 240.79L1857 0Z" begin="-6.666666666666667s" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" calcMode="spline" keyTimes="0;0.333;0.667;1" repeatCount="indefinite" dur="20s" attributeName="d"/>
+      </path>
+      <!-- layer 3 (top) with 1.0 opacity -->
+      <path opacity="1.0" fill="var(--primary)" d="">
+        <animate values="M0 0L0 446.42Q309.50 348.95 619 328.23T1238 320.74T1857 296.12L1857 0Z;M0 0L0 464.97Q309.50 399.41 619 361.94T1238 291.78T1857 271.56L1857 0Z;M0 0L0 423.86Q309.50 417.89 619 374.41T1238 304.75T1857 298.01L1857 0Z;M0 0L0 446.42Q309.50 348.95 619 328.23T1238 320.74T1857 296.12L1857 0Z" begin="-13.333333333333334s" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" calcMode="spline" keyTimes="0;0.333;0.667;1" repeatCount="indefinite" dur="20s" attributeName="d"/>
+      </path>
+    </g>
+  </g>
+</svg>

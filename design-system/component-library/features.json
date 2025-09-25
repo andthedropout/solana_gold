@@ -1,0 +1,150 @@
+{
+  "category": "features",
+  "description": "Feature showcases and benefit sections",
+  "components": [
+    {
+      "id": "shadcn-feature13",
+      "name": "Dual Audience Feature Cards",
+      "description": "Two-column card layout showcasing different target audiences with labels, titles, descriptions, and icons",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature13",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean audience-targeting cards - excellent for platforms serving multiple user types."
+    },
+    {
+      "id": "shadcn-feature2",
+      "name": "Feature Section with Image",
+      "description": "Two-column feature section with image and content",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature2",
+      "dependencies": ["button"],
+      "complexity": "low",
+      "styleNotes": "Standard split layout with image left, content right. Works well with all themes."
+    },
+    {
+      "id": "shadcn-feature166",
+      "name": "Feature Grid with Icons",
+      "description": "2x2 grid feature showcase with header, icons, titles, and descriptions",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature166",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean 2x2 grid with centered header and icon placeholders."
+    },
+    {
+      "id": "shadcn-feature108",
+      "name": "Comprehensive Feature Showcase",
+      "description": "Multi-section layout with header, benefit highlights, and split content with logo display",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature108",
+      "dependencies": ["button"],
+      "complexity": "high",
+      "styleNotes": "Comprehensive multi-section layout with inline benefits and prominent branding."
+    },
+    {
+      "id": "shadcn-feature72",
+      "name": "Feature Grid with Header and CTA",
+      "description": "Feature section with descriptive header, call-to-action, and 2x2 grid of feature cards",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature72",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Professional layout with header section, CTA button, and organized feature grid."
+    },
+    {
+      "id": "shadcn-feature73",
+      "name": "Alternative Feature Grid Layout",
+      "description": "Variation of feature grid with different styling approach - similar to feature72 with alternative visual treatment",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature73",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Alternative styling to feature72 - provides different visual treatment with similar functionality."
+    },
+    {
+      "id": "shadcn-feature43",
+      "name": "Why Work With Us Benefits Grid",
+      "description": "Benefits showcase with centered title and 2x3 grid of benefit categories with icons and descriptions",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature43",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Benefits-focused 2x3 grid layout - excellent for showcasing company advantages."
+    },
+    {
+      "id": "shadcn-feature17",
+      "name": "Core Features Grid",
+      "description": "Core features section with left-aligned title and 2x3 grid of feature items with icons and descriptions",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature17",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Clean 2x3 grid with left-aligned title - ideal for core product capabilities."
+    },
+    {
+      "id": "shadcn-feature239",
+      "name": "Split Hero Feature",
+      "description": "Two-column layout with content left, visual right - includes title, description, CTA button, and card/visual element",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature239",
+      "dependencies": ["button"],
+      "complexity": "low",
+      "styleNotes": "Standard split layout - content left, visual right. Good for most feature presentations."
+    },
+    {
+      "id": "shadcn-feature197",
+      "name": "Expandable Feature List",
+      "description": "Split layout with expandable/accordion feature list on left and visual on right - includes collapsible sections",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature197",
+      "dependencies": ["accordion"],
+      "complexity": "medium",
+      "styleNotes": "Interactive accordion-style feature list - great for detailed feature explanations."
+    },
+    {
+      "id": "shadcn-feature74",
+      "name": "Alternating Feature Layout",
+      "description": "Header section with CTA followed by alternating left-right feature items with icons and descriptions",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature74",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Alternating feature layout with header CTA - great for detailed feature walkthroughs."
+    },
+    {
+      "id": "shadcn-feature51",
+      "name": "Three-Step Process Layout",
+      "description": "Process showcase with three step cards at top and large central visual element below",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature51",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Clean three-step process layout with prominent central visual - great for workflow explanations."
+    },
+    {
+      "id": "shadcn-feature42",
+      "name": "Values and Principles Layout",
+      "description": "Split layout with title section on left and 2x2 grid of values/principles with descriptions on right",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature42",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean values showcase with split layout - perfect for company values and principles sections."
+    },
+    {
+      "id": "shadcn-feature3",
+      "name": "Feature Grid Cards",
+      "description": "Centered title with 3x2 grid of feature cards containing icons, titles, and descriptions",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature3",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean 3x2 card grid with centered header - great for comprehensive feature showcases."
+    },
+    {
+      "id": "feature16",
+      "name": "Three-Column Feature Showcase",
+      "description": "Clean three-column layout showcasing core features with icons and descriptions",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature16",
+      "dependencies": ["card"],
+      "complexity": "low",
+      "styleNotes": "Simple grid layout with consistent spacing and typography"
+    },
+    {
+      "id": "feature15",
+      "name": "Unique Value Proposition Grid",
+      "description": "Centered header with 2x2 grid showcasing unique company values and differentiators",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/feature15",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean 2x2 grid layout with centered header - perfect for highlighting what makes you unique"
+    }
+  ]
+} 

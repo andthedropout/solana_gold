@@ -1,0 +1,15 @@
+{
+  "category": "templates",
+  "description": "Full page layouts and comprehensive multi-section templates",
+  "components": [
+    {
+      "id": "shadcn-content1",
+      "name": "Comprehensive Content Page",
+      "description": "Full page layout with hero section, detailed content sections, central branding, and structured information display",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/content1",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Comprehensive page layout with multiple content sections, central logo placement, structured text hierarchy, and detailed information display."
+    }
+  ]
+} 

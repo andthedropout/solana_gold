@@ -1,0 +1,51 @@
+{
+  "category": "testimonials",
+  "description": "Customer testimonials and social proof",
+  "components": [
+    {
+      "id": "shadcn-testimonial4",
+      "name": "Multi-Column Testimonial Grid",
+      "description": "Professional testimonial grid layout with multiple customer testimonials in cards or columns",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/testimonial4",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Multi-column grid layout with card-based testimonials - provides strong social proof with multiple customer voices."
+    },
+    {
+      "id": "shadcn-testimonial10",
+      "name": "Minimal Customer Testimonial",
+      "description": "Clean, centered testimonial with quote text and customer details (avatar, name, role)",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/testimonial10",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Minimal, centered design with large quote text and clean customer attribution - works well with all themes."
+    },
+    {
+      "id": "shadcn-testimonial14",
+      "name": "Single Testimonial with Rating",
+      "description": "Centered single testimonial with quote, customer avatar, name, position, star rating, and navigation dots - perfect for testimonial carousels",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/testimonial14",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Centered testimonial with star rating and navigation elements - includes carousel functionality with professional customer attribution."
+    },
+    {
+      "id": "aceternity-infinite-moving-cards",
+      "name": "Aceternity Infinite Moving Cards",
+      "description": "Dynamic infinite scrolling cards component with smooth animations and continuous movement - perfect for testimonials, social proof, or content showcases that need continuous engagement",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/infinite-moving-cards.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced infinite scrolling component with smooth animations and continuous movement - ideal for testimonials, social proof displays, and engaging content carousels."
+    },
+    {
+      "id": "aceternity-animated-testimonials",
+      "name": "Aceternity Animated Testimonials",
+      "description": "Advanced animated testimonials component with smooth transitions, dynamic effects, and interactive elements - perfect for engaging customer testimonial displays with modern animations",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/animated-testimonials.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced animated testimonials with smooth transitions and dynamic effects - ideal for creating engaging social proof displays with modern interactive animations."
+    }
+  ]
+} 

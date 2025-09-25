@@ -1,0 +1,15 @@
+{
+  "category": "logos",
+  "description": "Company logo showcases and social proof sections",
+  "components": [
+    {
+      "id": "shadcn-logos3",
+      "name": "Company Trust Logos",
+      "description": "Horizontal company logo showcase with trust messaging for social proof",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/logos3",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean horizontal logo arrangement with trust messaging header - logos displayed in muted grayscale style."
+    }
+  ]
+} 

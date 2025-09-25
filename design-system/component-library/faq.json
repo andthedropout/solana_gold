@@ -1,0 +1,15 @@
+{
+  "category": "faq",
+  "description": "Frequently asked questions sections and help content",
+  "components": [
+    {
+      "id": "shadcn-faq5",
+      "name": "Numbered FAQ List",
+      "description": "Clean FAQ section with numbered questions, expandable answers, and clear hierarchy - perfect for comprehensive help sections",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/faq5",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Professional numbered layout with clear question hierarchy and expandable answers - excellent for comprehensive FAQ sections."
+    }
+  ]
+} 

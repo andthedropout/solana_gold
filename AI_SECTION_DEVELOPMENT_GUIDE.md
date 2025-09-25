@@ -1,0 +1,407 @@
+# AI Section Development Guide
+
+## Overview
+
+This guide teaches AI models how to create new sections for our CMS system. A section is a reusable, configurable component that users can add to pages and customize through the admin interface.
+
+## System Architecture
+
+Our section system has these key components:
+
+1. **Section Component**: React component that renders the section
+2. **Zod Schema**: Defines the structure and validation for section content
+3. **Default Content**: Provides fallback values and initial configuration
+4. **Form Generation**: Automatically generates admin forms from the schema
+5. **Content Management**: Dynamic loading, saving, and preview functionality
+
+## File Structure & Naming
+
+### Directory Structure
+```
+assets/src/components/sections/
+├── heros/
+│   ├── Hero1.tsx
+│   ├── Hero2.tsx
+├── features/
+│   ├── Feature1.tsx
+├── testimonials/
+│   ├── Testimonial1.tsx
+```
+
+### Naming Conventions
+- **Component Name**: `{Category}{Number}` (e.g., `Hero1`, `Feature2`, `Testimonial3`)
+- **File Name**: `{ComponentName}.tsx` (e.g., `Hero1.tsx`)
+- **Directory**: `{category}s/` (plural form - `heros/`, `features/`, `testimonials/`)
+- **Schema Export**: `{ComponentName}Schema` (e.g., `Hero1Schema`)
+- **Type Export**: `{ComponentName}Content` (e.g., `Hero1Content`)
+- **Default Content Export**: `{ComponentName}DefaultContent` (e.g., `Hero1DefaultContent`)
+
+## Required Imports
+
+Every section component must import these core dependencies:
+
+```typescript
+import React from 'react';
+import { useSectionContent } from '@/hooks/useSectionContent';
+import { z } from 'zod';
+import { 
+  createResponsivePaddingSchema, 
+  DEFAULT_RESPONSIVE_PADDING, 
+  generateResponsivePaddingCSS,
+  normalizePadding,
+  createButtonSchema,
+  ButtonWithIcon,
+  TEXT_COLOR_OPTIONS,
+  getTextColorClass,
+  SectionWrapper
+} from '@/components/admin/section_settings';
+```
+
+### Additional Imports (as needed)
+- **Animation**: `import { motion } from 'framer-motion';`
+- **Icons**: `import { IconName } from 'lucide-react';`
+- **UI Components**: `import { Button, Card, Input } from '@/components/ui/component-name';`
+
+## Schema Development
+
+### Basic Schema Structure
+```typescript
+const {ComponentName}Schema = z.object({
+  // Text content grouped in nested object
+  textContent: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    description: z.string(),
+    textColor: z.enum(TEXT_COLOR_OPTIONS)
+  }),
+  
+  // Buttons (use createButtonSchema for ALL buttons)
+  primaryCta: createButtonSchema(),
+  secondaryCta: createButtonSchema(),
+  topButton: createButtonSchema(),
+  
+  // Always include responsive padding
+  sectionPadding: createResponsivePaddingSchema()
+});
+```
+
+### Schema Field Guidelines
+
+#### Text Fields
+- **Short text**: `z.string()` → renders as `<Input>`
+- **Long text**: Use field names containing `subtitle`, `description`, or `content` → renders as `<Textarea>`
+- **Required validation**: `z.string().min(1, "Field is required")`
+- **Text colors**: Always use `z.enum(TEXT_COLOR_OPTIONS)`
+
+#### Arrays
+```typescript
+animatedWords: z.array(z.string()).min(1, "At least one item is required")
+```
+
+#### Buttons
+- **ALWAYS use**: `createButtonSchema()` for any button/CTA
+- **Never create custom button schemas** - the system provides comprehensive button functionality
+
+#### Images (when adding image support)
+```typescript
+image: z.object({
+  src: z.string(),
+  alt: z.string(),
+  width: z.number().optional(),
+  height: z.number().optional()
+})
+```
+
+#### Colors
+- **Text colors**: `z.enum(TEXT_COLOR_OPTIONS)`
+- **Background colors**: Use theme-based enums, never arbitrary hex codes
+
+### Required Schema Fields
+Every schema MUST include:
+1. `sectionPadding: createResponsivePaddingSchema()` - For responsive spacing
+2. At least one `textColor` field using `TEXT_COLOR_OPTIONS`
+
+## Default Content
+
+### Structure Requirements
+```typescript
+const DEFAULT_CONTENT: {ComponentName}Content = {
+  textContent: {
+    title: "Compelling Headline",
+    subtitle: "Supporting description that explains the value proposition",
+    textColor: "foreground"
+  },
+  sectionPadding: DEFAULT_RESPONSIVE_PADDING,
+  primaryCta: {
+    visible: true,
+    text: "Get Started",
+    url: "/signup",
+    variant: "default",
+    size: "lg",
+    icon: "arrow-right",
+    iconPosition: "right"
+  }
+};
+```
+
+### Content Guidelines
+- **Realistic Content**: Use compelling, business-appropriate copy
+- **Variety**: Different CTAs should have different purposes (primary action vs. learn more)
+- **URL Examples**: Use realistic paths (`/signup`, `/contact`, `/pricing`, `example.com` for external)
+- **Icon Selection**: Choose appropriate icons from the available set
+- **Visibility**: All buttons should default to `visible: true`
+
+## Component Implementation
+
+### Basic Component Structure
+```typescript
+interface {ComponentName}Props {
+  sectionId: string;
+}
+
+const {ComponentName}: React.FC<{ComponentName}Props> = ({ sectionId }) => {
+  const { content, loading, error } = useSectionContent(sectionId, DEFAULT_CONTENT);
+  
+  const normalizedPadding = normalizePadding(content.sectionPadding);
+  const paddingCSS = generateResponsivePaddingCSS(normalizedPadding, '{component-name}-responsive-padding');
+
+  return (
+    <SectionWrapper loading={loading} error={error}>
+      <style>{paddingCSS.css}</style>
+      <section 
+        className={`w-full ${paddingCSS.className} ${paddingCSS.fullScreenClasses}`}
+        style={paddingCSS.styles}
+      >
+        {/* Component content */}
+      </section>
+    </SectionWrapper>
+  );
+};
+```
+
+### Required Patterns
+
+#### 1. Content Hook Usage
+```typescript
+const { content, loading, error } = useSectionContent(sectionId, DEFAULT_CONTENT);
+```
+
+#### 2. Responsive Padding
+```typescript
+const normalizedPadding = normalizePadding(content.sectionPadding);
+const paddingCSS = generateResponsivePaddingCSS(normalizedPadding, 'unique-class-name');
+```
+
+#### 3. Section Wrapper
+```typescript
+<SectionWrapper loading={loading} error={error}>
+  <style>{paddingCSS.css}</style>
+  <section className={`w-full ${paddingCSS.className} ${paddingCSS.fullScreenClasses}`} style={paddingCSS.styles}>
+    {/* Content */}
+  </section>
+</SectionWrapper>
+```
+
+#### 4. Text Color Application
+```typescript
+className={`text-xl ${getTextColorClass(content.textContent?.textColor || "foreground")}`}
+```
+
+#### 5. Button Rendering
+```typescript
+{(content.primaryCta.visible !== false) && (
+  <ButtonWithIcon cta={content.primaryCta} />
+)}
+```
+
+#### 6. Content Fallbacks
+```typescript
+{content.textContent?.title || DEFAULT_CONTENT.textContent.title}
+```
+
+## Required Exports
+
+Every section component MUST export:
+
+```typescript
+export default {ComponentName};
+export type { {ComponentName}Content };
+export { DEFAULT_CONTENT as {ComponentName}DefaultContent };
+export { {ComponentName}Schema };
+```
+
+## Form Integration Requirements
+
+### Button Form Integration
+If your section uses any button fields with names OTHER than `primaryCta` or `secondaryCta`, you MUST update the form generator:
+
+**File**: `assets/src/components/admin/section_settings/SchemaForm.tsx`
+**Line to modify**: Find `isCTASection` check and add your button field names:
+
+```typescript
+const isCTASection = key === 'primaryCta' || key === 'secondaryCta' || key === 'topButton' || key === 'yourButtonName';
+```
+
+This ensures your buttons get:
+- Visibility toggle (eye icon)
+- Proper accordion layout
+- All button configuration options
+
+## Styling Guidelines
+
+### Use Shadcn/Tailwind Classes
+```typescript
+// ✅ CORRECT - Use theme classes
+className="bg-background text-foreground border-border"
+
+// ❌ WRONG - Don't use arbitrary values
+className="bg-white text-black border-gray-200"
+```
+
+### Responsive Design
+```typescript
+// Mobile-first responsive classes
+className="text-2xl md:text-4xl lg:text-6xl"
+className="flex flex-col sm:flex-row gap-4"
+className="px-4 md:px-8 lg:px-12"
+```
+
+### Layout Patterns
+```typescript
+// Container patterns
+<div className="container mx-auto">  // Full-width container
+<div className="max-w-6xl mx-auto">  // Fixed max-width
+<div className="w-full max-w-4xl mx-auto px-4"> // With padding
+```
+
+## Advanced Patterns
+
+### Animation Integration
+```typescript
+import { motion } from 'framer-motion';
+
+// Simple fade in
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+>
+  {content}
+</motion.div>
+
+// Staggered children
+<motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ staggerChildren: 0.1 }}
+>
+  {items.map((item, index) => (
+    <motion.div
+      key={index}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      {item}
+    </motion.div>
+  ))}
+</motion.div>
+```
+
+### State Management
+```typescript
+// For animations or interactive features
+const [currentIndex, setCurrentIndex] = useState(0);
+
+useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentIndex(prev => (prev + 1) % items.length);
+  }, 3000);
+  return () => clearInterval(timer);
+}, [items.length]);
+```
+
+### Data Transformation
+```typescript
+// Handle flexible data formats
+const getItems = () => {
+  const items = content.items;
+  if (Array.isArray(items)) return items;
+  if (typeof items === 'string') {
+    return items.split(',').map(item => item.trim()).filter(Boolean);
+  }
+  return DEFAULT_CONTENT.items;
+};
+```
+
+## Testing & Validation
+
+### Schema Validation
+Ensure your schema validates correctly:
+```typescript
+// Test your schema with sample data
+const testData = {
+  textContent: { title: "Test", textColor: "foreground" },
+  sectionPadding: DEFAULT_RESPONSIVE_PADDING
+};
+
+const result = YourSchema.safeParse(testData);
+if (!result.success) {
+  console.error("Schema validation failed:", result.error);
+}
+```
+
+### Content Fallbacks
+Test with missing/invalid data:
+```typescript
+// Your component should handle these gracefully
+const testCases = [
+  {}, // Empty object
+  { textContent: {} }, // Partial content
+  null, // Null content
+  undefined // Undefined content
+];
+```
+
+## Common Patterns by Section Type
+
+### Hero Sections
+- Large typography with responsive sizing
+- Multiple CTAs (primary/secondary)
+- Background images/gradients
+- Centered content layout
+
+### Feature Sections
+- Grid layouts (cards/items)
+- Icons + text combinations
+- List-style layouts
+- Comparison tables
+
+### Testimonial Sections
+- Customer quotes
+- Avatar/profile images
+- Company logos
+- Rating systems
+
+### Content Sections
+- Rich text content
+- Image + text combinations
+- Multi-column layouts
+- Sidebar content
+
+## Error Prevention
+
+### Common Mistakes to Avoid
+
+1. **Missing Exports**: Always export schema, type, and default content
+2. **Button Schema**: Never create custom button schemas - use `createButtonSchema()`
+3. **Form Integration**: Add new button field names to `isCTASection` check
+4. **Padding**: Always include `sectionPadding` and proper responsive handling
+5. **Theme Colors**: Use theme classes, not arbitrary colors
+6. **Content Fallbacks**: Always provide fallbacks for dynamic content
+7. **Unique CSS Classes**: Use unique class names for responsive padding CSS
+
+## Summary
+
+Follow this guide exactly to create sections that integrate seamlessly with our CMS system. The key is understanding that sections are data-driven components where the schema defines both the structure and the automatically generated admin interface. Every piece must work together: schema validation, form generation, content management, and responsive design.
+
+Remember: **the schema is the contract** - it defines what users can configure, how forms are generated, and how content is validated. Design your schema carefully, and the rest of the system will work automatically. 

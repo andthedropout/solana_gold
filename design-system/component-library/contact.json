@@ -1,0 +1,15 @@
+{
+  "category": "contact",
+  "description": "Contact forms and information sections",
+  "components": [
+    {
+      "id": "shadcn-contact7",
+      "name": "Multi-Section Contact Layout",
+      "description": "Professional contact section with multiple contact methods - email, office location, and phone - each with descriptive text and contact details",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/contact7",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Professional multi-section layout with clear contact method organization - provides comprehensive contact information in an organized format."
+    }
+  ]
+} 

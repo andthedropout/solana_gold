@@ -1,0 +1,24 @@
+{
+  "category": "footers",
+  "description": "Footer sections and site information",
+  "components": [
+    {
+      "id": "shadcn-footer2",
+      "name": "Modern Footer",
+      "description": "Professional footer with multiple column layout, company info, and organized navigation links. Includes contact details and social media links.",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/footer2",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Uses CSS variables for theming, works well with all theme systems. Professional multi-column layout with organized sections."
+    },
+    {
+      "id": "shadcn-footer7",
+      "name": "Organized Business Footer",
+      "description": "Clean business footer with company branding, organized navigation columns (Product, Company, Resources), social links, and copyright section.",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/footer7",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Clean organized layout with clear navigation sections. Works well with professional themes and corporate branding."
+    }
+  ]
+} 

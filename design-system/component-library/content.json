@@ -1,0 +1,51 @@
+{
+  "category": "content",
+  "description": "Text sections, about pages, and content blocks",
+  "components": [
+    {
+      "id": "shadcn-faq1",
+      "name": "FAQ Accordion",
+      "description": "Clean FAQ section with accordion-style questions and answers",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/faq1",
+      "dependencies": ["accordion"],
+      "complexity": "low",
+      "styleNotes": "Minimal design with smooth accordion animations, theme-aware."
+    },
+    {
+      "id": "shadcn-casestudy5",
+      "name": "Case Study Showcase",
+      "description": "Professional case study layout with featured case and additional studies grid",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/casestudy5",
+      "dependencies": ["lucide-react"],
+      "complexity": "medium",
+      "styleNotes": "Clean grid layout with hover effects, dotted pattern backgrounds, professional typography with theme integration."
+    },
+    {
+      "id": "shadcn-list2",
+      "name": "Achievements & Recognition List",
+      "description": "Structured list showcasing awards, achievements, and recognition with icons and categories",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/list2",
+      "dependencies": ["lucide-react"],
+      "complexity": "low",
+      "styleNotes": "Clean list layout with icons, category labels, achievement titles, and action links - fully responsive."
+    },
+    {
+      "id": "shadcn-about3",
+      "name": "Comprehensive About Section",
+      "description": "Multi-section about layout with header, prominent logo display, sidebar content, and client testimonials",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/about3",
+      "dependencies": ["button"],
+      "complexity": "high",
+      "styleNotes": "Comprehensive about layout with header section, large central logo, sidebar content, and client logo showcase at bottom."
+    },
+    {
+      "id": "aceternity-timeline",
+      "name": "Aceternity Timeline",
+      "description": "Advanced timeline component with sticky header and scroll beam follow - perfect for showcasing company history, project milestones, and chronological content",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/timeline.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced timeline with sticky header and scroll beam animations - ideal for company history, project timelines, and chronological storytelling with engaging visual progression."
+    }
+  ]
+} 

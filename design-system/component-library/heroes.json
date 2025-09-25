@@ -1,0 +1,150 @@
+{
+  "category": "heroes",
+  "description": "Hero sections and landing page headers",
+  "components": [
+    {
+      "id": "shadcn-hero1",
+      "name": "Shadcn Hero 1",
+      "description": "Modern hero section with background image, centered content and call-to-action buttons",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero1",
+      "dependencies": ["button", "badge"],
+      "complexity": "low",
+      "styleNotes": "Clean design with background image support, works with all themes."
+    },
+    {
+      "id": "shadcn-hero151",
+      "name": "Split Layout with Geometric Elements",
+      "description": "Modern split-layout hero with text content on left and customizable visual elements on right",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero151",
+      "dependencies": ["button", "avatar"],
+      "complexity": "medium",
+      "styleNotes": "Clean split layout with customizable visual placeholders (geometric shapes can be replaced with any images), includes testimonial section with avatars."
+    },
+    {
+      "id": "21st-animated-hero",
+      "name": "Animated Centered Hero",
+      "description": "Centered hero section with smooth animations, large typography, and dual call-to-action buttons",
+      "installCommand": "npx shadcn@latest add \"https://21st.dev/r/tommyjepsen/animated-hero\"",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Clean centered layout with animations, large impactful typography, includes top navigation link and dual CTA buttons."
+    },
+    {
+      "id": "shadcn-hero115",
+      "name": "Centered Hero with Logo Focus",
+      "description": "Clean centered hero with prominent logo/graphic, descriptive text, single CTA button, and trust indicator",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero115",
+      "dependencies": ["button"],
+      "complexity": "low",
+      "styleNotes": "Ultra-clean centered design with large logo focal point, minimal text, and subtle trust indicators."
+    },
+    {
+      "id": "shadcn-hero45",
+      "name": "Logo Hero with Feature Highlights",
+      "description": "Centered hero with prominent logo/branding plus three-column feature highlights section below",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero45",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Clean centered branding section with large logo, followed by three-column feature grid with icons and descriptions."
+    },
+    {
+      "id": "shadcn-hero7",
+      "name": "Hero with Customer Testimonials",
+      "description": "Centered hero with headline, description, CTA button, and customer testimonials with star ratings",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero7",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Centered hero with social proof integration - combines compelling messaging with customer validation through testimonials and ratings."
+    },
+    {
+      "id": "shadcn-hero32",
+      "name": "Split Hero with Icon Grid",
+      "description": "Split-layout hero with text content on left and decorative geometric icon grid on right",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero32",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Modern split layout with geometric icon grid, emphasizes visual design and component modularity."
+    },
+    {
+      "id": "shadcn-hero3",
+      "name": "Split Hero with Social Proof",
+      "description": "Split-layout hero with text content, customer testimonials, dual CTAs, and prominent logo display",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero3",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Split layout combining compelling content with social validation - includes customer testimonials and dual action buttons."
+    },
+    {
+      "id": "shadcn-hero47",
+      "name": "Split Hero with Product Mockup",
+      "description": "Split-layout hero featuring product showcase with text content on left and device mockup on right, dual CTAs and documentation link",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero47",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Modern split layout with product focus - combines compelling messaging with visual product demonstration through device mockup."
+    },
+    {
+      "id": "shadcn-hero206",
+      "name": "Centered Hero with Dashboard Preview",
+      "description": "Centered hero with large headline, trust indicators, and comprehensive dashboard mockup showcasing analytics and data visualization",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero206",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Centered layout with comprehensive dashboard mockup - includes detailed data visualization and analytics components."
+    },
+    {
+      "id": "shadcn-hero71",
+      "name": "Minimal Centered Hero with Icon",
+      "description": "Clean minimal hero with centered text, dual CTAs, and prominent geometric icon - perfect for professional service companies",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero71",
+      "dependencies": ["button"],
+      "complexity": "low",
+      "styleNotes": "Ultra-minimal centered design with clean typography, geometric icon, and subtle gradient background - emphasizes clarity and professionalism."
+    },
+    {
+      "id": "shadcn-hero78",
+      "name": "Dramatic Dark Hero with Abstract Elements",
+      "description": "Striking dark-themed hero with centered text, abstract curved background elements, and single CTA - perfect for creative and scientific themes",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero78",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Dramatic dark theme with abstract curved elements and scientific/creative aesthetic - emphasizes innovation and discovery."
+    },
+    {
+      "id": "shadcn-hero67",
+      "name": "Centered Hero with Brand Focus",
+      "description": "Clean centered hero with prominent branding, compelling headline, trust indicators, and large geometric logo display - perfect for brand-focused presentations",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero67",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Clean centered design with strong brand presence and geometric logo - emphasizes professional credibility and brand identity."
+    },
+    {
+      "id": "shadcn-hero8",
+      "name": "Centered Hero with Dual CTAs and Logo",
+      "description": "Clean centered hero with compelling headline, dual call-to-action buttons, and prominent geometric logo display - perfect for component libraries and developer tools",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero8",
+      "dependencies": ["button"],
+      "complexity": "low",
+      "styleNotes": "Simple centered design with dual action buttons and geometric logo - emphasizes speed and efficiency for developer-focused products."
+    },
+    {
+      "id": "shadcn-hero34",
+      "name": "Split Hero with Logo Display",
+      "description": "Split-layout hero with text content on left, geometric logo on right, badge element, and dual call-to-action buttons - perfect for welcoming visitors and brand presentation",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero34",
+      "dependencies": ["button", "badge"],
+      "complexity": "medium",
+      "styleNotes": "Split layout with professional presentation - combines welcoming messaging with strong brand identity through geometric logo display."
+    },
+    {
+      "id": "shadcn-hero12",
+      "name": "Centered Hero with Tech Stack",
+      "description": "Centered hero with brand icon, compelling headline, dual CTAs, and technology stack showcase - perfect for developer tools and technical products",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/hero12",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Clean centered design with technology focus - includes brand icon and tech stack display to emphasize technical credibility."
+    }
+  ]
+} 

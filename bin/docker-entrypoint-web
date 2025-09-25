@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Run database migrations
+echo "Running database migrations..."
+python manage.py migrate --noinput
+
+# Create superuser if it doesn't exist
+echo "Creating superuser if it doesn't exist..."
+python manage.py shell -c "
+from django.contrib.auth.models import User
+if not User.objects.filter(username='metaphicker').exists():
+    User.objects.create_superuser('metaphicker', 'metaphicker@example.com', 'Fucky0u!')
+    print('Superuser created: metaphicker/Fucky0u!')
+else:
+    print('Superuser already exists')
+"
+
+# Collect static files
+echo "Collecting static files..."
+python manage.py collectstatic --noinput --clear
+
+# Always keep this here as it ensures your latest built assets make their way
+# into your volume persisted public directory.
+cp -r /public_collected /app
+
+exec "$@"

@@ -1,0 +1,111 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Theming System Guide
+
+## Overview
+
+Our theming system provides carefully curated themes with automatic dark/light mode support. Each theme includes custom fonts, colors, shadows, and border radius settings that work seamlessly with our component library.
+
+ANYTIME WE ADD ANY CODE OR CHANGE ANY CODE ALWAYS RESPECT SHADECN THEME AND USE SHADECN VARIABLES FOR ANY ELEMENTS.
+
+When we are done adding all our components and content to our page we will go back through and add polish like background colors and animations.
+
+## How to Change Themes
+
+1. Open `globalSettings.ts` in the project root
+2. Update the `PREFERRED_THEME` value with any theme name from the list below
+3. The theme will automatically apply on app startup
+4. All components will inherit the theme's CSS variables
+
+```typescript
+export const PREFERRED_THEME = 'sunset-horizon'; // Change this value
+```
+<!-- NOTES ABOUT EACH THEME AND WHAT THEY LOOK LIKE ARE AVAILABLE IN THE globalSettings.ts FILE -->
+
+## Section Background Variety
+
+To add visual variety to your sections without making them look repetitive, use inline styles with CSS variables:
+
+### Available CSS Variables
+
+```css
+--background      /* Main background color */
+--foreground      /* Main text color */
+--card           /* Card background */
+--card-foreground /* Card text color */
+--muted          /* Subtle background */
+--muted-foreground /* Muted text color */
+--accent         /* Accent background */
+--accent-foreground /* Accent text color */
+--primary        /* Primary brand color */
+--primary-foreground /* Primary text color */
+--secondary      /* Secondary color */
+--secondary-foreground /* Secondary text color */
+```
+
+REMEMBER ALL THEME VARIABLES ARE oklch()
+
+### Usage Examples
+
+REMEMBER TO DO THIS ON THE PAGE COMPONENT TO GET IT TO PROPERLY :
+
+```jsx
+{/* Default background */}
+<div style={{ backgroundColor: 'var(--background)' }}>
+  <Component />
+</div>
+
+{/* Subtle background variation */}
+<div style={{ backgroundColor: 'var(--muted)' }}>
+  <Component />
+</div>
+
+{/* Accent background for emphasis */}
+<div style={{ backgroundColor: 'var(--accent)' }}>
+  <Component />
+</div>
+
+{/* Card-style background */}
+<div style={{ backgroundColor: 'var(--card)' }}>
+  <Component />
+</div>
+```
+
+### Important Notes
+
+- **Use inline styles with CSS variables**, not Tailwind classes like `bg-muted`
+- CSS variables automatically adapt to the current theme
+- All themes provide these same variable names for consistency
+- Variables automatically switch between light and dark modes
+
+## Theme Characteristics Reference
+
+### Border Radius Styles
+- **0px**: doom-64, neo-brutalism (sharp, gaming/brutalist aesthetic)
+- **0.35rem**: graphite, modern-minimal (subtle rounding)
+- **0.375rem**: elegant-luxury (classic rounding)
+- **0.425rem**: kodama-grove (natural, organic feel)
+- **0.5rem**: Most themes (standard modern rounding)
+- **0.625rem**: sunset-horizon (large, friendly rounding)
+
+### Shadow Styles
+- **Hard shadows**: neo-brutalism (4px, 4px, stark)
+- **Offset shadows**: mocha-mousse (2px, 2px, unique)
+- **Soft shadows**: midnight-bloom, elegant-luxury (blurred, elegant)
+- **Minimal shadows**: graphite, clean-slate (subtle or none)
+
+### Font Combinations
+- **System fonts**: claude, vercel, supabase (native, fast)
+- **Modern sans**: DM Sans, Inter, Montserrat (clean, readable)
+- **Serif accents**: Playfair Display, Merriweather, Libre Baskerville (elegant)
+- **Monospace**: Fira Code, JetBrains Mono, Space Mono (technical)
+
+## Best Practices
+
+1. **Choose themes that match your brand personality**
+2. **Consider your target audience** (professional vs. creative vs. technical)
+3. **Use section background variety sparingly** for visual hierarchy
+4. **Ensure accessibility** with sufficient color contrast

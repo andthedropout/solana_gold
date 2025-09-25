@@ -1,0 +1,51 @@
+{
+  "category": "gallery",
+  "description": "Image galleries and portfolio showcases",
+  "components": [
+    {
+      "id": "shadcn-gallery6",
+      "name": "Project Portfolio Gallery",
+      "description": "Interactive portfolio gallery with project cards featuring titles, descriptions, navigation arrows, and 'Read more' CTAs. Includes header with demo booking link.",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/gallery6",
+      "dependencies": ["button", "card"],
+      "complexity": "medium",
+      "styleNotes": "Clean card-based gallery with navigation controls. Works well with professional themes and business branding."
+    },
+    {
+      "id": "shadcn-gallery4",
+      "name": "Case Studies Gallery",
+      "description": "Image-based case studies gallery with overlay text, navigation arrows, and pagination dots. Features technology framework showcases with descriptive content.",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/gallery4",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Image-heavy gallery with text overlays. Works well with dark themes and technology-focused content."
+    },
+    {
+      "id": "aceternity-parallax-scroll-2",
+      "name": "Aceternity Parallax Scroll",
+      "description": "Advanced parallax scrolling component with smooth animations and dynamic visual effects - perfect for showcasing images, portfolios, and immersive content experiences",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/parallax-scroll parallax-scroll-2.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced parallax scroll component with smooth animations and visual effects - ideal for creating immersive gallery experiences and dynamic content showcases."
+    },
+    {
+      "id": "aceternity-layout-grid",
+      "name": "Aceternity Layout Grid",
+      "description": "Dynamic layout grid component with interactive hover effects, responsive masonry-style layout, and smooth animations - perfect for portfolio galleries and image showcases",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/layout-grid.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced grid layout component with masonry-style positioning and interactive effects - ideal for creative portfolios, image galleries, and dynamic content layouts."
+    },
+    {
+      "id": "aceternity-images-slider",
+      "name": "Aceternity Images Slider",
+      "description": "Large photo slideshow component with smooth transitions, navigation controls, and full-screen display capabilities - perfect for showcasing high-quality images and portfolio photography",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/images-slider.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced large-format image slider with smooth transitions and navigation controls - ideal for photography portfolios, product showcases, and immersive visual presentations."
+    }
+  ]
+} 

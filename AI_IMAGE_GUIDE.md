@@ -1,0 +1,240 @@
+# DALL-E MCP Integration
+
+This project includes integration with the [DALL-E MCP Server](https://github.com/garoth/dalle-mcp) for AI image generation during development.
+
+## Overview
+
+The DALL-E MCP (Model Context Protocol) server allows you to generate AI images directly through our development workflow. This is particularly useful for:
+
+- Creating hero images for CMS sections
+- Generating placeholder images for testing
+- Creating visual content for features and components
+- Rapid prototyping with AI-generated assets
+
+## Setup
+
+### 1. Run the Setup Script
+
+```bash
+./scripts/setup-dalle-mcp.sh
+```
+
+This script will:
+- Clone the DALL-E MCP repository
+- Install dependencies and build the project
+- Create a Docker configuration
+- Provide next steps
+
+### 2. Configure Environment Variables
+
+Add your OpenAI API key to Cursor's MCP settings (not to .env file).
+
+### 3. Enable the Service
+
+The MCP server runs outside Docker and connects directly to Cursor.
+
+## Django Static File Structure
+
+**IMPORTANT**: This Django project serves static files from `/static/` URLs. When generating AI images:
+
+### Correct Image Paths:
+- **Save Location**: `/Users/thedropout/Github/docker-django-react-starter/public/images/`
+- **Reference in Components**: `/static/images/filename.png`
+
+### Example Usage:
+```typescript
+// ✅ CORRECT - Always use /static/images/ prefix
+<img src="/static/images/ai-generated-hero.png" alt="AI generated image" />
+
+// ❌ WRONG - Don't use /images/ directly
+<img src="/images/ai-generated-hero.png" alt="AI generated image" />
+```
+
+### DALL-E MCP Configuration:
+When using the DALL-E MCP tools, always set:
+```typescript
+saveDir: "/Users/thedropout/Github/docker-django-react-starter/public/images"
+```
+
+Then reference the image in components as:
+```typescript
+src: "/static/images/your-filename.png"
+```
+
+## Usage Examples
+
+### Generate Hero Background
+```typescript
+// Generate image
+mcp_dalle-mcp_generate_image({
+  prompt: "Modern tech workspace with holographic displays",
+  saveDir: "/Users/thedropout/Github/docker-django-react-starter/public/images",
+  fileName: "hero-background"
+});
+
+// Use in component
+<img src="/static/images/hero-background.png" alt="Hero background" />
+```
+
+### Generate Feature Icons
+```typescript
+// Generate image
+mcp_dalle-mcp_generate_image({
+  prompt: "Minimalist icon representing AI automation",
+  size: "512x512",
+  saveDir: "/Users/thedropout/Github/docker-django-react-starter/public/images",
+  fileName: "ai-feature-icon"
+});
+
+// Use in component
+<img src="/static/images/ai-feature-icon.png" alt="AI feature icon" />
+```
+
+## Available Tools
+
+### generate_image
+Generate an image using DALL-E based on a text prompt.
+
+**Required Parameters:**
+- `prompt`: Text description of the desired image
+- `saveDir`: Always use `/Users/thedropout/Github/docker-django-react-starter/public/images`
+
+**Optional Parameters:**
+- `model`: "dall-e-2" or "dall-e-3" (default: "dall-e-3")
+- `size`: Image dimensions (default: "1024x1024")
+- `quality`: "standard" or "hd" (DALL-E 3 only)
+- `style`: "vivid" or "natural" (DALL-E 3 only)
+- `fileName`: Base filename without extension
+
+### edit_image
+Edit existing images (DALL-E 2 only).
+
+### create_variation
+Create variations of existing images (DALL-E 2 only).
+
+## Django Static Files Workflow
+
+1. **Generate Image**: AI images are saved to `public/images/`
+2. **Django Collection**: Run `python manage.py collectstatic` to copy to `public_collected/images/`
+3. **URL Serving**: Django serves from `/static/images/` URLs
+4. **Component Reference**: Always use `/static/images/filename.png` in React components
+
+## Best Practices
+
+### File Naming
+- Use descriptive, kebab-case names: `hero-tech-workspace.png`
+- Include purpose in name: `feature-ai-automation.png`
+- Avoid spaces and special characters
+
+### Image Optimization
+- Use appropriate sizes for purpose (hero: 1792x1024, icons: 512x512)
+- Choose quality based on use case (hd for heroes, standard for icons)
+- Consider file size for web performance
+
+### Component Integration
+```typescript
+// ✅ Good pattern
+const HeroSection = () => (
+  <div 
+    style={{ backgroundImage: "url('/static/images/ai-hero-bg.png')" }}
+    className="hero-section"
+  >
+    <img src="/static/images/ai-feature-icon.png" alt="Feature icon" />
+  </div>
+);
+```
+
+## Troubleshooting
+
+### Image Not Loading
+1. Check file exists in `public/images/`
+2. Verify path uses `/static/images/` prefix
+3. Run `python manage.py collectstatic` if needed
+4. Check Django static file settings
+
+### MCP Server Issues
+1. Verify OpenAI API key in Cursor MCP settings
+2. Restart Cursor after configuration changes
+3. Check MCP server logs for errors
+
+## Integration with Component Library
+
+When creating components that use AI-generated images:
+
+1. **Document in component library**: Include image requirements
+2. **Use consistent paths**: Always `/static/images/` prefix
+3. **Provide fallbacks**: Handle missing images gracefully
+4. **Optimize for performance**: Choose appropriate image sizes
+
+This ensures seamless integration between AI image generation and Django's static file serving system.
+
+## Configuration
+
+### Environment Variables
+
+- `OPENAI_API_KEY`: Your OpenAI API key (required)
+- `DALLE_MCP_SAVE_DIR`: Directory for generated images (default: `/app/public/images`)
+- `DALLE_MCP_PORT`: Port for the MCP server (default: `3001`)
+
+### Image Storage
+
+Generated images are saved to `public/images/` by default, making them accessible via:
+- Django static files: `/static/images/filename.png`
+- Direct access: `http://localhost:8000/images/filename.png`
+
+## Development Only
+
+This integration is designed for **local development only**. The DALL-E MCP service:
+
+- Only runs when `dalle-mcp` is included in `COMPOSE_PROFILES`
+- Is excluded from production builds
+- Requires an OpenAI API key (not included in version control)
+
+## Troubleshooting
+
+### Service Won't Start
+- Ensure you've run the setup script: `./scripts/setup-dalle-mcp.sh`
+- Check that your OpenAI API key is set in Cursor MCP settings
+- Verify `dalle-mcp` is in your `COMPOSE_PROFILES`
+
+### Images Not Generating
+- Check the MCP server logs: `docker compose logs dalle-mcp`
+- Verify your OpenAI API key has sufficient credits
+- Ensure the save directory is writable
+
+### Port Conflicts
+- Change `DALLE_MCP_PORT` in your `.env` file if port 3001 is in use
+- Update the port mapping in `compose.yaml` if needed
+
+## API Costs
+
+Be aware that using DALL-E incurs costs on your OpenAI account:
+- DALL-E 3: ~$0.04-0.08 per image (depending on size/quality)
+- DALL-E 2: ~$0.016-0.020 per image (depending on size)
+
+## Integration with CMS
+
+This MCP server integrates seamlessly with our CMS section development workflow:
+
+1. **Design Phase**: Generate hero images, backgrounds, and visual elements
+2. **Development**: Create placeholder images for testing components
+3. **Content Creation**: Generate images for example sections and demos
+
+The generated images can be directly referenced in your section configurations and will be available through Django's static file system.
+
+## Security Notes
+
+- The `.env` file containing your API key is git-ignored
+- The `dalle-mcp/` directory is git-ignored (cloned locally only)
+- The service only runs in development profiles
+- No API keys are committed to version control
+
+## Updating
+
+To update the DALL-E MCP server:
+
+```bash
+./scripts/setup-dalle-mcp.sh
+```
+
+The script will pull the latest changes and rebuild the service. 

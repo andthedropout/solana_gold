@@ -1,0 +1,133 @@
+# AI Website Scaffolding Guide
+
+## Overview
+
+This project uses a curated component library system for rapid AI-powered website development. Instead of building custom CMS sections, AI agents select and install pre-vetted components from popular libraries like shadcn/ui.
+
+## Component Library System
+
+### Location
+All component definitions are in `/component-library/` with 20-30 curated options per category.
+
+### Categories
+- `heroes.json` - Hero sections and landing headers
+- `pricing.json` - Pricing tables and subscription sections  
+- `features.json` - Feature showcases and benefit sections
+- `testimonials.json` - Customer testimonials and social proof
+- `navigation.json` - Headers, navbars, and navigation
+- `forms.json` - Contact forms, signup forms, and inputs
+- `content.json` - Text sections, about pages, content blocks
+- `footers.json` - Footer sections and site information
+- `components.json` - Individual UI components (buttons, cards, etc.)
+
+## AI Workflow for Building Sites
+
+### 1. Analyze Requirements
+- Project type (SaaS, agency, e-commerce, etc.)
+- Target audience (B2B, consumer, enterprise)
+- Performance needs (fast loading vs visual impact)
+- Complexity tolerance (simple vs feature-rich)
+
+### 2. Component Selection Process
+```typescript
+// For each section needed:
+1. Read appropriate JSON file (e.g., heroes.json for hero section)
+2. Review ALL 20-30 options in that category
+3. Use selection criteria to pick best match:
+   - Check `bestFor` array for project type match
+   - Avoid options in `avoid` array
+   - Consider `complexity`, `performance`, `bundleSize`
+   - Read `styleNotes` for theme compatibility
+4. Select the optimal component for the specific use case
+```
+
+### 3. Installation & Implementation
+```bash
+# Run install commands from selected component
+npx shadcn@latest add button
+npx shadcn@latest add card
+# etc.
+
+# Build component using provided structure
+# Apply tweakcn theme system (automatic via CSS variables)
+# Use SectionContainer system for automatic background variety
+```
+
+### 4. Background Variety System
+Components automatically get visually distinct backgrounds using the SectionContainer system:
+
+```typescript
+// Automatic alternating backgrounds
+const sections = [
+  { id: 'hero', component: <Hero />, variant: 'gradient' },
+  { id: 'features', component: <Features /> }, // auto: 'muted'
+  { id: 'pricing', component: <Pricing /> },  // auto: 'accent'
+  { id: 'faq', component: <FAQ /> },          // auto: 'default'
+];
+
+<HomepageLayout sections={sections} autoAlternate={true} />
+```
+
+**Available Background Variants:**
+- `default` - Theme background color
+- `muted` - Subtle contrast with bg-muted/30
+- `accent` - Light accent with bg-accent/20
+- `gradient` - Gradient from background to muted/accent
+- `pattern` - Subtle dot pattern overlay
+- `transparent` - No background
+
+## Selection Criteria Priority
+
+1. **Project Type Match**: `bestFor` must include the project type
+2. **Performance Requirements**: Consider `bundleSize` and `performance` ratings
+3. **Complexity Appropriateness**: Match `complexity` to timeline/requirements
+4. **Theme Compatibility**: Prioritize components with good `styleNotes`
+5. **Mobile Optimization**: Ensure `mobileOptimized: true` for responsive sites
+
+## Key Principles
+
+- **Always review ALL options** in a category before selecting
+- **Match components to specific use case** - don't pick randomly
+- **Consider the full user journey** - ensure components work well together
+- **Prioritize performance** unless visual impact is specifically requested
+- **Use `styleNotes`** to ensure proper theme integration
+- **Install only what you need** - no pre-loading of unused components
+
+## Styling System
+
+- All components automatically use **tweakcn theme system**
+- CSS variables handle colors, fonts, and design tokens
+- Components should require **minimal custom styling**
+- Focus on content and layout, not visual design
+
+## Example Selection Process
+
+```
+User Request: "Build a SaaS landing page for enterprise customers"
+
+Process:
+1. heroes.json → Review all 20-30 hero options
+2. Find options with "enterprise" or "B2B SaaS" in `bestFor`
+3. Prioritize "excellent" performance and "low" complexity
+4. Select: "shadcn-hero-centered" (professional, fast, theme-friendly)
+5. Install: npx shadcn@latest add button badge
+6. Build hero with enterprise-appropriate content
+```
+
+## Quality Standards
+
+- Components must work with tweakcn theme system
+- All selections must be justified by component metadata
+- Prefer proven, stable components over experimental ones
+- Ensure mobile responsiveness for all selections
+- Consider bundle size impact on page performance
+
+## Future AI: Your Job
+
+1. **Read the component library files** - don't guess what's available
+2. **Make informed choices** based on component metadata
+3. **Install exactly what you need** using provided commands
+4. **Build cohesive sites** that work well together
+5. **Apply themes automatically** via CSS variables
+
+This system replaces complex CMS architectures with simple, curated component selection for rapid website development. 

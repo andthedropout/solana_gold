@@ -1,0 +1,15 @@
+{
+  "category": "stats",
+  "description": "Statistics, metrics, and data showcase sections",
+  "components": [
+    {
+      "id": "shadcn-stats8",
+      "name": "Platform Performance Stats",
+      "description": "Clean metrics showcase with large numbers and descriptive text for performance insights",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/stats8",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean typography with prominent numbers, includes header section with optional report link, responsive grid layout."
+    }
+  ]
+} 

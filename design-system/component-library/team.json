@@ -1,0 +1,24 @@
+{
+  "category": "team",
+  "description": "Team showcases and about sections",
+  "components": [
+    {
+      "id": "shadcn-team2",
+      "name": "Team Grid Showcase",
+      "description": "Professional team showcase with header section and 4x2 grid layout featuring team member cards with avatars, names, roles, descriptions, and social links",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/team2",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Clean grid layout with professional team member cards, includes avatar placeholders, role descriptions, and social media links."
+    },
+    {
+      "id": "shadcn-team1",
+      "name": "Team Grid Section",
+      "description": "Clean team showcase with header section and responsive grid of team members with avatars, names, and roles",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/team1",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Clean team grid with centered header, circular avatars, and consistent name/role typography - responsive grid layout."
+    }
+  ]
+} 

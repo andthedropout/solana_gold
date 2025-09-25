@@ -1,0 +1,78 @@
+{
+  "category": "forms",
+  "description": "Contact forms, signup forms, and inputs",
+  "components": [
+    {
+      "id": "shadcn-signup1",
+      "name": "Clean Signup Form",
+      "description": "Professional signup form with email/password fields, Google sign-up option, and login link",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/signup1",
+      "dependencies": ["input", "button"],
+      "complexity": "medium",
+      "styleNotes": "Clean card-style form with brand header, input fields, social login options, and navigation links."
+    },
+    {
+      "id": "shadcn-login1",
+      "name": "Clean Login Form",
+      "description": "Professional login form with email/password fields, Google sign-in option, and signup link",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/login1",
+      "dependencies": ["input", "button"],
+      "complexity": "medium",
+      "styleNotes": "Clean card-style form with brand header, input fields, social login options, and navigation links."
+    },
+    {
+      "id": "shadcn-login3",
+      "name": "Enhanced Login Form",
+      "description": "Feature-rich login form with welcome message, remember me checkbox, forgot password link, and social login",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/login3",
+      "dependencies": ["input", "button", "checkbox"],
+      "complexity": "medium",
+      "styleNotes": "Enhanced login card with welcome messaging, additional UX features like remember me and password recovery options."
+    },
+    {
+      "id": "shadcn-login2",
+      "name": "Minimal Login Form",
+      "description": "Clean minimal login form with geometric logo, welcome message, email/password inputs, Google sign-in, and signup link",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/login2",
+      "dependencies": ["input", "button"],
+      "complexity": "low",
+      "styleNotes": "Minimal centered card with geometric logo, clean inputs, and simple navigation - emphasizes simplicity and professional appearance."
+    },
+    {
+      "id": "shadcn-signup2",
+      "name": "Minimal Signup Form",
+      "description": "Clean minimal signup form with geometric logo, account creation message, email/password inputs, Google signup, and login link",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/signup2",
+      "dependencies": ["input", "button"],
+      "complexity": "low",
+      "styleNotes": "Minimal centered card with geometric logo, clean inputs, and simple navigation - emphasizes simplicity and professional appearance."
+    },
+    {
+      "id": "shadcn-login-01",
+      "name": "Dark Login Form",
+      "description": "Modern dark-themed login form with email/password inputs, Google authentication, forgot password link, and signup navigation",
+      "installCommand": "npx shadcn@latest add login-01",
+      "dependencies": ["input", "button"],
+      "complexity": "medium",
+      "styleNotes": "Dark-themed login form with clean typography, rounded inputs, and professional layout - excellent for modern applications and dark mode interfaces."
+    },
+    {
+      "id": "shadcn-login-02",
+      "name": "GitHub Login Form",
+      "description": "Professional login form with company branding, email/password inputs, GitHub authentication, forgot password link, and signup navigation",
+      "installCommand": "npx shadcn@latest add login-02",
+      "dependencies": ["input", "button"],
+      "complexity": "medium",
+      "styleNotes": "Dark-themed login form with company branding header and GitHub authentication - ideal for developer-focused applications and professional platforms."
+    },
+    {
+      "id": "shadcn-login-04",
+      "name": "Multi-Social Login Form",
+      "description": "Welcome back login form with email/password inputs, multiple social authentication options (Apple, Google, Meta), forgot password link, and signup navigation",
+      "installCommand": "npx shadcn@latest add login-04",
+      "dependencies": ["input", "button"],
+      "complexity": "medium",
+      "styleNotes": "Dark-themed login form with welcome messaging and comprehensive social authentication options - perfect for consumer applications requiring multiple login methods."
+    }
+  ]
+} 

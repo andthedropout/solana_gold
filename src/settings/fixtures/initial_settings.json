@@ -1,0 +1,20 @@
+[
+  {
+    "model": "settings.sitesettings",
+    "pk": 1,
+    "fields": {
+      "company_name": "TechFlow Solutions",
+      "company_logo": "/static/images/logo.png",
+      "contact_email": "hello@techflow.com",
+      "contact_phone": "+1 (555) 123-4567",
+      "contact_address": "123 Innovation Drive, San Francisco, CA 94105",
+      "social_facebook": "https://facebook.com/techflow",
+      "social_twitter": "https://twitter.com/techflow",
+      "social_instagram": "https://instagram.com/techflow",
+      "social_linkedin": "https://linkedin.com/company/techflow",
+      "social_youtube": "https://youtube.com/@techflow",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+] 

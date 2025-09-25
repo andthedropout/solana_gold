@@ -1,0 +1,15 @@
+{
+  "category": "casestudy",
+  "description": "Case study sections and client work showcases",
+  "components": [
+    {
+      "id": "shadcn-casestudy5",
+      "name": "Professional Case Study Layout",
+      "description": "Clean case study presentation with project details, client information, and structured content sections",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/casestudy5",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Professional layout with structured content sections - excellent for showcasing detailed project work and client results."
+    }
+  ]
+} 

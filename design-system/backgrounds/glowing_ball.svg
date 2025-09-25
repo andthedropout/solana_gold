@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid" width="100%" height="100%" style="shape-rendering: auto; display: block; background: transparent;" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Simple radial gradient for soft circle -->
+    <radialGradient id="soft-gradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="var(--secondary)"/>
+      <stop offset="30%" stop-color="var(--secondary)"/>
+      <stop offset="70%" stop-color="var(--secondary)" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="var(--secondary)" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Simple breathing circle -->
+  <circle cx="600" cy="400" r="300" fill="url(#soft-gradient)">
+    <!-- Simple breathing animation -->
+    <animate
+      attributeName="r"
+      values="300; 330; 300"
+      dur="3s"
+      repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,42 @@
+{
+  "category": "effects",
+  "description": "Visual effects, animations, and flashy UI components",
+  "components": [
+    {
+      "id": "aceternity-svg-mask-effect",
+      "name": "Aceternity SVG Mask Effect",
+      "description": "Novel SVG mask text effect with dynamic visual transformations and creative animations - perfect for artistic displays, creative headers, and unique visual experiences",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/svg-mask-effect.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced SVG mask effect with creative visual transformations - ideal for artistic applications, creative agencies, and unique visual experiences that need standout effects."
+    },
+    {
+      "id": "aceternity-sticky-scroll-reveal",
+      "name": "Aceternity Sticky Scroll Reveal",
+      "description": "Sticky scroll text reveal effect with progressive content disclosure and smooth animations - perfect for storytelling, content reveals, and engaging scroll-based narratives",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/sticky-scroll-reveal.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced sticky scroll effect with text reveal animations - ideal for storytelling websites, content narratives, and engaging scroll-based user experiences."
+    },
+    {
+      "id": "aceternity-animated-tabs",
+      "name": "Aceternity Animated Tabs",
+      "description": "Dynamic animated tabs with smooth background animations and content switching - perfect for interactive interfaces, dashboards, and engaging content organization with visual flair",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/tabs.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced animated tabs with dynamic background animations - ideal for interactive dashboards, content organization, and modern interfaces requiring engaging tab transitions."
+    },
+    {
+      "id": "aceternity-wobble-card",
+      "name": "Aceternity Wobble Card",
+      "description": "Interactive card effect that translates and scales on mousemove with smooth animations - perfect for feature cards, product showcases, and engaging interactive elements",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/wobble-card.json",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Interactive card component with mousemove animations and wobble effects - ideal for feature cards, product showcases, and adding engaging hover interactions to content."
+    }
+  ]
+} 

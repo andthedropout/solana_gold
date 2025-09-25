@@ -1,0 +1,33 @@
+{
+  "category": "cta",
+  "description": "Call-to-action sections and conversion-focused components",
+  "components": [
+    {
+      "id": "shadcn-cta4",
+      "name": "Split Layout CTA with Features",
+      "description": "Two-column call-to-action layout with title and description on the left, and feature checklist on the right - ideal for highlighting key benefits",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/cta4",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Split-column layout with feature list and checkmarks - excellent for showcasing benefits alongside the call-to-action."
+    },
+    {
+      "id": "shadcn-cta10",
+      "name": "Simple Centered CTA",
+      "description": "Clean, centered call-to-action section with title, description text, and action buttons - perfect for conversion-focused sections",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/cta10",
+      "dependencies": [],
+      "complexity": "low",
+      "styleNotes": "Minimal, centered design with clear hierarchy - excellent for driving user action with clean button styling."
+    },
+    {
+      "id": "shadcn-cta11",
+      "name": "Enhanced CTA with Background",
+      "description": "Professional call-to-action section with background styling, enhanced visual appeal, and prominent action buttons",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/cta11",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Enhanced design with background styling and visual appeal - provides more prominent call-to-action presence."
+    }
+  ]
+} 

@@ -1,0 +1,60 @@
+{
+  "category": "navigation",
+  "description": "Headers, navbars, and navigation components",
+  "components": [
+    {
+      "id": "shadcn-navbar-professional",
+      "name": "Professional ShadCN Navbar",
+      "description": "Clean, professional navbar with mobile menu, dark mode toggle, and authentication buttons. Features sticky positioning and smooth responsive behavior.",
+      "installCommand": "npx shadcn@latest add button navigation-menu sheet separator",
+      "dependencies": ["button", "navigation-menu", "sheet", "separator"],
+      "complexity": "medium",
+      "styleNotes": "Uses CSS variables for colors, works perfectly with tweakcn theme system. Automatically adapts to light/dark modes."
+    },
+    {
+      "id": "shadcn-navbar1",
+      "name": "Clean Header Navigation",
+      "description": "Simple horizontal navigation with logo, menu items, and authentication buttons",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/navbar1",
+      "dependencies": ["button"],
+      "complexity": "low",
+      "styleNotes": "Clean horizontal layout with logo left, navigation center, auth buttons right - simple and professional."
+    },
+    {
+      "id": "shadcn-navbar5",
+      "name": "Clean Horizontal Navbar",
+      "description": "Professional horizontal navbar with logo, navigation links, and dual action buttons - perfect for SaaS and business websites",
+      "installCommand": "npx shadcn@canary add https://shadcnblocks.com/r/navbar5",
+      "dependencies": ["button"],
+      "complexity": "medium",
+      "styleNotes": "Clean horizontal layout with professional spacing, includes brand logo and dual action buttons for sign in and conversion."
+    },
+    {
+      "id": "aceternity-sidebar",
+      "name": "Aceternity Sidebar",
+      "description": "Modern sidebar navigation component with collapsible functionality, menu items, and smooth animations - perfect for dashboard and admin interfaces",
+      "installCommand": "npx shadcn@latest add \"https://21st.dev/r/aceternity/sidebar\"",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced sidebar component with collapsible functionality and smooth animations - ideal for dashboard layouts and admin panels with comprehensive navigation needs."
+    },
+    {
+      "id": "aceternity-resizable-navbar",
+      "name": "Aceternity Resizable Navbar",
+      "description": "Dynamic resizable navbar component with smooth animations, adaptive layout, and interactive resizing functionality - perfect for responsive dashboard interfaces",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/resizable-navbar.json",
+      "dependencies": [],
+      "complexity": "high",
+      "styleNotes": "Advanced resizable navbar with dynamic width adjustment and smooth animations - ideal for adaptive dashboard layouts and complex navigation requirements."
+    },
+    {
+      "id": "aceternity-floating-navbar",
+      "name": "Aceternity Floating Navbar",
+      "description": "Modern floating navbar with smooth backdrop blur, elegant hover effects, and dynamic styling - perfect for modern websites with clean UI aesthetics",
+      "installCommand": "npx shadcn@latest add https://ui.aceternity.com/registry/floating-navbar.json",
+      "dependencies": [],
+      "complexity": "medium",
+      "styleNotes": "Sleek floating navbar with glass-like blur effect and elegant hover states - adapts to any theme and provides a modern, subtle navigation experience."
+    }
+  ]
+} 
