@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NAVIGATION_CONFIG } from '../../../GLOBALSETTINGS';
+import { useStaticSiteSettings } from './useStaticSiteSettings';
 
 interface User {
   id: number;
@@ -28,14 +29,26 @@ interface NavigationData {
 }
 
 export const useNavigation = (user: User | null, isAuthenticated: boolean): NavigationData => {
+  const { settings } = useStaticSiteSettings();
+
+  const getRightButtons = () => {
+    if (isAuthenticated) {
+      return [{ name: 'Logout', href: '/logout', action: 'auth' as const }];
+    }
+
+    const buttons: NavigationButton[] = [];
+    if (settings.header_show_login) {
+      buttons.push({ name: 'Login', href: '/login', action: 'route' as const });
+    }
+    if (settings.header_show_signup) {
+      buttons.push({ name: 'Sign Up', href: '/register', action: 'route' as const });
+    }
+    return buttons;
+  };
+
   const [navigationData, setNavigationData] = useState<NavigationData>({
     items: [],
-    rightButtons: isAuthenticated
-      ? [{ name: 'Logout', href: '/logout', action: 'auth' as const }]
-      : [
-          { name: 'Login', href: '/login', action: 'route' as const },
-          { name: 'Sign Up', href: '/register', action: 'route' as const }
-        ]
+    rightButtons: getRightButtons()
   });
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -71,29 +84,24 @@ export const useNavigation = (user: User | null, isAuthenticated: boolean): Navi
 
       setNavigationData({
         items: navigationItems,
-        rightButtons: isAuthenticated
-          ? [{ name: 'Logout', href: '/logout', action: 'auth' as const }]
-          : [
-              { name: 'Login', href: '/login', action: 'route' as const },
-              { name: 'Sign Up', href: '/register', action: 'route' as const }
-            ]
+        rightButtons: getRightButtons()
       });
     };
 
   useEffect(() => {
     loadNavigation();
-    
+
     // Listen for navigation refresh events
     const handleNavigationRefresh = () => {
       loadNavigation();
     };
-    
+
     window.addEventListener('refreshNavigation', handleNavigationRefresh);
-    
+
     return () => {
       window.removeEventListener('refreshNavigation', handleNavigationRefresh);
     };
-  }, [user, isAuthenticated, refreshKey]);
+  }, [user, isAuthenticated, refreshKey, settings.header_show_login, settings.header_show_signup]);
 
   return navigationData;
 }; 

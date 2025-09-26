@@ -28,6 +28,7 @@ import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings';
 import { useAuth } from "../../../hooks/useAuth";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { useTheme } from "../../theme-provider";
+import { WalletButton } from "../../WalletButton";
 
 const ProfessionalHeader = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -104,6 +105,7 @@ const ProfessionalHeader = () => {
           {/* Right: Actions */}
           <div className="flex items-center gap-4">
           <div className="hidden items-center gap-4 lg:flex">
+              <WalletButton />
               {rightButtons.map((button, index) => (
                 button.action === 'auth' ? (
                   <Button key={index} variant="outline" size="sm" onClick={() => handleButtonClick(button)}>
@@ -179,11 +181,12 @@ const ProfessionalHeader = () => {
                 {/* Action Buttons Section */}
                 <div className="py-6 px-6 border-t">
                   <div className="flex flex-col gap-3">
+                    <WalletButton />
                     {rightButtons.map((button, index) => (
                       button.action === 'auth' ? (
-                        <Button 
-                          key={index} 
-                          variant="outline" 
+                        <Button
+                          key={index}
+                          variant="outline"
                           size="lg"
                           className="w-full"
                           onClick={() => handleButtonClick(button)}
@@ -191,9 +194,9 @@ const ProfessionalHeader = () => {
                           {button.name}
                         </Button>
                       ) : (
-                        <Button 
-                          key={index} 
-                          asChild 
+                        <Button
+                          key={index}
+                          asChild
                           variant={button.name === 'Sign Up' ? 'default' : 'outline'}
                           size="lg"
                           className="w-full"

@@ -13,7 +13,7 @@ export const useStaticSiteSettings = () => {
     header_show_logo: false, // Temporarily disable logo to avoid 404 errors
     header_show_company_name: true,
     header_show_dark_mode_toggle: true,
-    header_show_login: true,
+    header_show_login: false,
     header_show_signup: false,
     header_background_transparent: false,
     header_is_sticky: true,
