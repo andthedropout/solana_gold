@@ -7,6 +7,7 @@ import Login from '@/pages/Login'
 import SignUp from '@/pages/SignUp'
 import Dashboard from '@/pages/Dashboard'
 import Homepage from '@/pages/Homepage'
+import { WalletContextProvider } from '@/components/WalletContextProvider'
 import { useTheme } from '@/hooks/useTheme'
 
 function App() {
@@ -125,16 +126,18 @@ function App() {
         // Content appears instantly - no animation
         // Individual components will handle their own entrance animations
         <div key="content">
-          <BrowserRouter>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Homepage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<SignUp />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-              </Routes>
-            </Layout>
-          </BrowserRouter>
+          <WalletContextProvider>
+            <BrowserRouter>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Homepage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<SignUp />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </WalletContextProvider>
         </div>
       )}
     </AnimatePresence>
