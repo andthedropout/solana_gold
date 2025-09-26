@@ -1,13 +1,12 @@
 import React from 'react';
 import { NAVIGATION_CONFIG } from '../../../../../GLOBALSETTINGS';
-import { useSiteSettingsWithPreview } from '@/hooks/useSiteSettingsWithPreview';
+import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings';
 import { FloatingHeader } from './FloatingHeader';
 import { CleanHeader } from './CleanHeader';
 import { ProfessionalHeader } from './ProfessionalHeader';
 import { Link } from 'react-router-dom';
 import { Home, User, Settings } from 'lucide-react';
 import { DarkModeToggle } from '../../dark-mode-toggle';
-import { ThemeCustomizerTrigger } from '../../ui/theme-customizer-trigger';
 import { useAuth } from '../../../hooks/useAuth';
 
 interface HeaderSelectorProps {
@@ -16,7 +15,7 @@ interface HeaderSelectorProps {
 
 export const HeaderSelector: React.FC<HeaderSelectorProps> = ({ className }) => {
   const { isAuthenticated, user } = useAuth();
-  const { settings } = useSiteSettingsWithPreview();
+  const { settings } = useStaticSiteSettings();
   
   switch (settings.header_type) {
     case 'floating':
@@ -50,10 +49,6 @@ export const HeaderSelector: React.FC<HeaderSelectorProps> = ({ className }) => 
               {/* Dark Mode Toggle */}
               {settings.header_show_dark_mode_toggle && (
                 <DarkModeToggle />
-              )}
-              {/* Theme Customizer - Site Managers Only */}
-              {isAuthenticated && user?.is_site_manager && (
-                <ThemeCustomizerTrigger />
               )}
             </div>
           )}

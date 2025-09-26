@@ -23,9 +23,8 @@ import {
   SheetTrigger,
 } from "../../ui/sheet";
 import { DarkModeToggle } from "../../dark-mode-toggle";
-import { ThemeCustomizerTrigger } from "../../ui/theme-customizer-trigger";
 import { NAVIGATION_CONFIG } from "../../../../../GLOBALSETTINGS";
-import { useSiteSettingsWithPreview } from '@/hooks/useSiteSettingsWithPreview';
+import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings';
 import { useAuth } from "../../../hooks/useAuth";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { useTheme } from "../../theme-provider";
@@ -33,7 +32,7 @@ import { useTheme } from "../../theme-provider";
 const ProfessionalHeader = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { items: navigationItems, rightButtons } = useNavigation(user, isAuthenticated);
-  const { settings } = useSiteSettingsWithPreview();
+  const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
   // Determine which logo to use based on current theme
@@ -118,9 +117,6 @@ const ProfessionalHeader = () => {
               ))}
               {settings.header_show_dark_mode_toggle && (
                 <DarkModeToggle />
-              )}
-              {isAuthenticated && user?.is_site_manager && (
-                <ThemeCustomizerTrigger />
               )}
           </div>
           <Sheet>
@@ -210,14 +206,11 @@ const ProfessionalHeader = () => {
                 </div>
 
                 {/* Controls Section */}
-                {(settings.header_show_dark_mode_toggle || (isAuthenticated && user?.is_site_manager)) && (
+                {settings.header_show_dark_mode_toggle && (
                   <div className="py-4 px-6 border-t bg-muted/20">
                     <div className="flex flex-row items-center justify-center gap-6">
                       {settings.header_show_dark_mode_toggle && (
                         <DarkModeToggle />
-                      )}
-                      {isAuthenticated && user?.is_site_manager && (
-                        <ThemeCustomizerTrigger />
                       )}
                     </div>
                   </div>

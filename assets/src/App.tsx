@@ -6,11 +6,8 @@ import { Layout } from '@/components/layout'
 import Login from '@/pages/Login'
 import SignUp from '@/pages/SignUp'
 import Dashboard from '@/pages/Dashboard'
-import { CMSPageRoute, CMSHomepage } from '@/pages/CMS'
+import Homepage from '@/pages/Homepage'
 import { useTheme } from '@/hooks/useTheme'
-import { CMSProvider } from '@/components/admin/CMSContext'
-import { CMSPreviewProvider } from '@/components/admin/CMSPreviewContext'
-import { SectionEditorProvider } from '@/components/admin/section_settings/SectionEditorContext'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -128,23 +125,16 @@ function App() {
         // Content appears instantly - no animation
         // Individual components will handle their own entrance animations
         <div key="content">
-          <CMSProvider>
-            <CMSPreviewProvider>
-              <SectionEditorProvider>
-                <BrowserRouter>
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<CMSHomepage />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<SignUp />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/:slug" element={<CMSPageRoute />} />
-                    </Routes>
-                  </Layout>
-                </BrowserRouter>
-              </SectionEditorProvider>
-            </CMSPreviewProvider>
-          </CMSProvider>
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<SignUp />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
         </div>
       )}
     </AnimatePresence>

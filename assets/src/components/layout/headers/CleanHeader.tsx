@@ -26,9 +26,8 @@ import {
   SheetTrigger,
 } from "../../ui/sheet";
 import { DarkModeToggle } from "../../dark-mode-toggle";
-import { ThemeCustomizerTrigger } from "../../ui/theme-customizer-trigger";
 import { NAVIGATION_CONFIG } from "../../../../../GLOBALSETTINGS";
-import { useSiteSettingsWithPreview } from '@/hooks/useSiteSettingsWithPreview';
+import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings';
 import { useAuth } from "../../../hooks/useAuth";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { useTheme } from "../../theme-provider";
@@ -53,7 +52,7 @@ interface CleanHeaderProps {
 const CleanHeader = (props: CleanHeaderProps) => {
   const { isAuthenticated, user, logout } = useAuth();
   const { items: navigationItems, rightButtons } = useNavigation(user, isAuthenticated);
-  const { settings } = useSiteSettingsWithPreview();
+  const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
   // Determine which logo to use based on current theme
@@ -141,9 +140,6 @@ const CleanHeader = (props: CleanHeaderProps) => {
             {settings.header_show_dark_mode_toggle && (
               <DarkModeToggle />
             )}
-            {isAuthenticated && user?.is_site_manager && (
-              <ThemeCustomizerTrigger />
-            )}
           </div>
         </nav>
 
@@ -177,14 +173,9 @@ const CleanHeader = (props: CleanHeaderProps) => {
               <SheetContent className="overflow-y-auto">
                 <div className="relative">
                   {/* Controls below and to the left of X button */}
-                  {(settings.header_show_dark_mode_toggle || (isAuthenticated && user?.is_site_manager)) && (
+                  {settings.header_show_dark_mode_toggle && (
                     <div className="absolute top-12 right-2 flex items-center gap-2">
-                      {settings.header_show_dark_mode_toggle && (
-                        <DarkModeToggle />
-                      )}
-                      {isAuthenticated && user?.is_site_manager && (
-                        <ThemeCustomizerTrigger />
-                      )}
+                      <DarkModeToggle />
                     </div>
                   )}
                   

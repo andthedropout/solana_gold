@@ -2,9 +2,7 @@ import React, { useEffect } from 'react'
 import Header from './headers'
 import Footer from './Footer'
 import { Toaster } from '@/components/ui/toaster'
-import { useSiteSettingsWithPreview } from '@/hooks/useSiteSettingsWithPreview'
-import { CMSEditingPanel } from '@/components/admin/CMSEditingPanel'
-import { SectionEditingPanel } from '@/components/admin/section_settings/SectionEditingPanel'
+import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings'
 
 
 interface LayoutProps {
@@ -20,7 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({
   showFooter = true,
   className = ""
 }) => {
-  const { settings, loading } = useSiteSettingsWithPreview();
+  const { settings, loading } = useStaticSiteSettings();
   
   // Update favicon dynamically when settings change
   useEffect(() => {
@@ -71,8 +69,6 @@ export const Layout: React.FC<LayoutProps> = ({
           </main>
           {showFooter && settings?.footer_show_footer && <Footer />}
         </div>
-        <CMSEditingPanel />
-        <SectionEditingPanel />
         <Toaster />
       </div>
     );
@@ -86,8 +82,6 @@ export const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
       {showFooter && settings?.footer_show_footer && <Footer />}
-      <CMSEditingPanel />
-      <SectionEditingPanel />
       <Toaster />
     </div>
   )

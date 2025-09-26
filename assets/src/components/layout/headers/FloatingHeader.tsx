@@ -9,9 +9,8 @@ import {
 } from "framer-motion";
 import { cn } from "../../../lib/utils";
 import { DarkModeToggle } from "../../dark-mode-toggle";
-import { ThemeCustomizerTrigger } from "../../ui/theme-customizer-trigger";
 import { NAVIGATION_CONFIG } from "../../../../../GLOBALSETTINGS";
-import { useSiteSettingsWithPreview } from '@/hooks/useSiteSettingsWithPreview';
+import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings';
 import { useAuth } from "../../../hooks/useAuth";
 import { useNavigation } from "../../../hooks/useNavigation";
 import { useTheme } from "../../theme-provider";
@@ -24,7 +23,7 @@ export const FloatingHeader = ({
   const { scrollYProgress } = useScroll();
   const { isAuthenticated, user, logout } = useAuth();
   const { items: navigationItems, rightButtons } = useNavigation(user, isAuthenticated);
-  const { settings } = useSiteSettingsWithPreview();
+  const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
   // Determine which logo to use based on current theme
@@ -153,12 +152,6 @@ export const FloatingHeader = ({
           </div>
         )}
         
-        {/* Theme Customizer - Site Managers Only */}
-        {isAuthenticated && user?.is_site_manager && (
-          <div className="mx-1">
-            <ThemeCustomizerTrigger />
-          </div>
-        )}
       </motion.div>
     </AnimatePresence>
   );

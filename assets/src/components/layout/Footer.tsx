@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { NAVIGATION_CONFIG } from "../../../../GLOBALSETTINGS";
-import { useSiteSettingsWithPreview } from '@/hooks/useSiteSettingsWithPreview';
+import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings';
 import { useTheme } from "../theme-provider";
 
 interface MenuItem {
@@ -29,7 +29,7 @@ interface FooterProps {
 }
 
 const Footer = (props: FooterProps) => {
-  const { settings, loading } = useSiteSettingsWithPreview();
+  const { settings, loading } = useStaticSiteSettings();
   const { theme } = useTheme();
   
   // Determine which logo to use based on current theme

@@ -8,7 +8,7 @@ import { Menu, X } from "lucide-react";
 import { DarkModeToggle } from "../../dark-mode-toggle";
 import { Button } from "../../ui/button";
 import { NAVIGATION_CONFIG, getNavigationItems } from "../../../../../GLOBALSETTINGS";
-import { useSiteSettingsWithPreview } from '@/hooks/useSiteSettingsWithPreview';
+import { useStaticSiteSettings } from '@/hooks/useStaticSiteSettings';
 import { useAuth } from "../../../hooks/useAuth";
 import { useTheme } from "../../theme-provider";
 
@@ -93,7 +93,7 @@ export const DesktopSidebar = ({
 }: React.ComponentProps<typeof motion.div>) => {
   const { open, setOpen, animate } = useSidebar();
   const { isAuthenticated, user, logout } = useAuth();
-  const { settings } = useSiteSettingsWithPreview();
+  const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
   // Determine which logo to use based on current theme
@@ -211,7 +211,7 @@ export const MobileSidebar = ({
 }: React.ComponentProps<"div">) => {
   const { open, setOpen } = useSidebar();
   const { isAuthenticated, user, logout } = useAuth();
-  const { settings } = useSiteSettingsWithPreview();
+  const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
   // Determine which logo to use based on current theme
