@@ -25,6 +25,7 @@ interface NavigationButton {
 
 interface NavigationData {
   items: NavigationItem[];
+  leftButtons: NavigationButton[];
   rightButtons: NavigationButton[];
 }
 
@@ -48,6 +49,7 @@ export const useNavigation = (user: User | null, isAuthenticated: boolean): Navi
 
   const [navigationData, setNavigationData] = useState<NavigationData>({
     items: [],
+    leftButtons: [],
     rightButtons: getRightButtons()
   });
   const [refreshKey, setRefreshKey] = useState(0);
@@ -74,16 +76,24 @@ export const useNavigation = (user: User | null, isAuthenticated: boolean): Navi
         console.warn('Failed to fetch navigation pages:', error);
       }
 
+      // Admin links go in leftButtons, not main navigation
+      const leftButtons: NavigationButton[] = [];
       if (isAuthenticated && user?.is_site_manager) {
-        navigationItems.push({
-          name: 'Site Admin',
-          href: '/dashboard',
+        leftButtons.push({
+          name: 'Home',
+          href: '/',
+          action: 'route'
+        });
+        leftButtons.push({
+          name: 'Exchange Admin',
+          href: '/exchange-admin',
           action: 'route'
         });
       }
 
       setNavigationData({
         items: navigationItems,
+        leftButtons,
         rightButtons: getRightButtons()
       });
     };

@@ -22,7 +22,7 @@ export const FloatingHeader = ({
 }) => {
   const { scrollYProgress } = useScroll();
   const { isAuthenticated, user, logout } = useAuth();
-  const { items: navigationItems, rightButtons } = useNavigation(user, isAuthenticated);
+  const { items: navigationItems, leftButtons, rightButtons } = useNavigation(user, isAuthenticated);
   const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
@@ -99,12 +99,26 @@ export const FloatingHeader = ({
             )}
           </Link>
         )}
-        
+
         {/* Divider - only show if logo is visible */}
         {settings.header_show_logo && (
           <div className="h-6 w-px bg-border"></div>
         )}
-        
+
+        {/* Admin Links */}
+        {leftButtons.map((button, index) => (
+          <Link key={`admin-${index}`} to={button.href}>
+            <button className="border text-sm font-medium relative border-primary/20 bg-secondary text-secondary-foreground px-4 py-2 rounded-full hover:bg-secondary/90 transition-colors">
+              <span>{button.name}</span>
+            </button>
+          </Link>
+        ))}
+
+        {/* Divider - only show if admin links exist */}
+        {leftButtons.length > 0 && (
+          <div className="h-6 w-px bg-border"></div>
+        )}
+
         {/* Navigation Items */}
         {navigationItems.map((navItem: any, idx: number) => (
           <Link

@@ -32,7 +32,7 @@ import { WalletButton } from "../../WalletButton";
 
 const ProfessionalHeader = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  const { items: navigationItems, rightButtons } = useNavigation(user, isAuthenticated);
+  const { items: navigationItems, leftButtons, rightButtons } = useNavigation(user, isAuthenticated);
   const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
@@ -58,8 +58,8 @@ const ProfessionalHeader = () => {
       'sticky top-0 z-50 border-b border-border' : ''}`}>
       <div className="container">
         <nav className="flex items-center justify-between">
-          {/* Left: Logo */}
-          <div className="flex items-center">
+          {/* Left: Logo and Admin Link */}
+          <div className="flex items-center gap-4">
             {settings.header_show_logo && (
           <Link
             to="/"
@@ -79,6 +79,15 @@ const ProfessionalHeader = () => {
             </span>
                 )}
           </Link>
+            )}
+            {leftButtons.length > 0 && (
+              <div className="hidden lg:flex items-center gap-2">
+                {leftButtons.map((button, index) => (
+                  <Button key={index} asChild variant="outline" size="sm">
+                    <Link to={button.href}>{button.name}</Link>
+                  </Button>
+                ))}
+              </div>
             )}
           </div>
 
@@ -157,8 +166,27 @@ const ProfessionalHeader = () => {
                       <p className="text-sm font-medium">Welcome back!</p>
                       <p className="text-lg font-semibold text-primary">{user.username}</p>
                       {user.is_site_manager && (
-                        <p className="text-xs text-muted-foreground mt-1">Site Administrator</p>
+                        <p className="text-xs text-muted-foreground mt-1">Exchange Administrator</p>
                       )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Admin Links (if any) */}
+                {leftButtons.length > 0 && (
+                  <div className="py-4 px-6 border-b">
+                    <div className="flex flex-col gap-3">
+                      {leftButtons.map((button, index) => (
+                        <Button
+                          key={index}
+                          asChild
+                          variant="outline"
+                          size="lg"
+                          className="w-full"
+                        >
+                          <Link to={button.href}>{button.name}</Link>
+                        </Button>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -167,9 +195,9 @@ const ProfessionalHeader = () => {
                 <div className="flex-1 py-6 px-6">
                   <div className="flex flex-col gap-4">
                     {navigationItems.map((item, index) => (
-                      <Link 
-                        key={index} 
-                        to={item.href} 
+                      <Link
+                        key={index}
+                        to={item.href}
                         className="py-3 px-4 text-center font-medium text-lg rounded-lg hover:bg-muted/50 transition-colors"
                       >
                         {item.name}

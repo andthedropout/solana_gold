@@ -52,6 +52,8 @@ api_patterns = [
     path("settings/", include("settings.urls")),
     # Sections URLs
     path("sections/", include("sections.urls")),
+    # Gold Exchange URLs
+    path("gold/", include("gold_exchange.urls")),
 ]
 
 @ensure_csrf_cookie

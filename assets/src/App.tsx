@@ -7,6 +7,7 @@ import Login from '@/pages/Login'
 import SignUp from '@/pages/SignUp'
 import Dashboard from '@/pages/Dashboard'
 import Homepage from '@/pages/Homepage'
+import { AdminDashboard } from '@/pages/AdminDashboard'
 import { WalletContextProvider } from '@/components/WalletContextProvider'
 import { useTheme } from '@/hooks/useTheme'
 
@@ -134,6 +135,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<SignUp />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/exchange-admin" element={<AdminDashboard />} />
                 </Routes>
               </Layout>
             </BrowserRouter>

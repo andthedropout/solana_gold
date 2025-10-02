@@ -1,4 +1,4 @@
-FROM node:20.6.1-bookworm-slim AS assets
+FROM node:20.18.0-bookworm-slim AS assets
 LABEL maintainer="Tam Le <tamsgit@gmail.com>"
 # [original] LABEL maintainer="Nick Janetakis <nick.janetakis@gmail.com>"
 

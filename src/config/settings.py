@@ -98,6 +98,7 @@ INSTALLED_APPS = [
     "settings",
     "sections",
     "images",
+    "gold_exchange",
 ]
 
 MIDDLEWARE = [
@@ -293,3 +294,18 @@ DOMAIN_API_CONFIG = {
 # OpenRouter AI Configuration
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY', '')
 SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
+
+# Solana Configuration
+SOLANA_NETWORK = os.getenv('SOLANA_NETWORK', 'devnet')
+SOLANA_RPC_URL = os.getenv('SOLANA_RPC_URL', 'https://api.devnet.solana.com')
+SGOLD_MINT_ADDRESS = os.getenv('SGOLD_MINT_ADDRESS', '')
+MINT_AUTHORITY_KEYPAIR = os.getenv('MINT_AUTHORITY_KEYPAIR', '')
+TREASURY_WALLET = os.getenv('TREASURY_WALLET', '')
+DEV_FUND_WALLET = os.getenv('DEV_FUND_WALLET', '')
+LIQUIDITY_WALLET = os.getenv('LIQUIDITY_WALLET', '')
+
+# Fee structure (basis points, e.g., 300 = 3%)
+BUY_FEE_TREASURY = int(os.getenv('BUY_FEE_TREASURY', '300'))
+BUY_FEE_DEV = int(os.getenv('BUY_FEE_DEV', '200'))
+SELL_FEE_TREASURY = int(os.getenv('SELL_FEE_TREASURY', '300'))
+SELL_FEE_BURN = int(os.getenv('SELL_FEE_BURN', '200'))

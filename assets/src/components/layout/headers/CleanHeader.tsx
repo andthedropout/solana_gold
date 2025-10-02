@@ -51,7 +51,7 @@ interface CleanHeaderProps {
 
 const CleanHeader = (props: CleanHeaderProps) => {
   const { isAuthenticated, user, logout } = useAuth();
-  const { items: navigationItems, rightButtons } = useNavigation(user, isAuthenticated);
+  const { items: navigationItems, leftButtons, rightButtons } = useNavigation(user, isAuthenticated);
   const { settings } = useStaticSiteSettings();
   const { theme } = useTheme();
   
@@ -102,13 +102,13 @@ const CleanHeader = (props: CleanHeaderProps) => {
             {/* Logo */}
             {settings.header_show_logo && (
             <Link to={logo.url} className="flex items-center gap-2">
-                <img 
-                  src={logo.src} 
+                <img
+                  src={logo.src}
                   className={cn(
                     "transition-all duration-200",
                     settings.header_show_company_name ? "max-h-8" : "max-h-12"
-                  )} 
-                  alt={logo.alt} 
+                  )}
+                  alt={logo.alt}
                 />
                 {settings.header_show_company_name && (
               <span className="text-lg font-semibold tracking-tighter">
@@ -116,6 +116,16 @@ const CleanHeader = (props: CleanHeaderProps) => {
               </span>
                 )}
             </Link>
+            )}
+            {/* Admin Links */}
+            {leftButtons.length > 0 && (
+              <div className="flex items-center gap-2">
+                {leftButtons.map((button, index) => (
+                  <Button key={index} asChild variant="outline" size="sm">
+                    <Link to={button.href}>{button.name}</Link>
+                  </Button>
+                ))}
+              </div>
             )}
             <div className="flex items-center">
               <NavigationMenu>

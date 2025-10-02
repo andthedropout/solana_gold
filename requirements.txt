@@ -18,3 +18,9 @@ setuptools==74.1.2
 dj-database-url
 stripe
 requests
+
+# Solana integration
+solana==0.34.3
+solders==0.21.0
+anchorpy==0.20.1
+base58==2.1.1

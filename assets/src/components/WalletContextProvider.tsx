@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, createContext, useContext, useState, useEffect } from 'react';
-import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js';
 
 // Simple wallet interface
 interface WalletContextType {
@@ -10,6 +10,9 @@ interface WalletContextType {
   disconnect: () => void;
   connecting: boolean;
   error: string | null;
+  connection: Connection;
+  signTransaction?: (transaction: Transaction) => Promise<Transaction>;
+  signAndSendTransaction?: (transaction: Transaction) => Promise<string>;
 }
 
 const WalletContext = createContext<WalletContextType>({
@@ -20,6 +23,9 @@ const WalletContext = createContext<WalletContextType>({
   disconnect: () => {},
   connecting: false,
   error: null,
+  connection: new Connection(clusterApiUrl('devnet'), 'confirmed'),
+  signTransaction: undefined,
+  signAndSendTransaction: undefined,
 });
 
 interface WalletContextProviderProps {
@@ -120,6 +126,38 @@ export const WalletContextProvider: FC<WalletContextProviderProps> = ({ children
     }
   }, [connected, publicKey]);
 
+  // Sign transaction with Phantom
+  const signTransaction = async (transaction: Transaction): Promise<Transaction> => {
+    const phantom = getPhantom();
+    if (!phantom || !connected) {
+      throw new Error('Wallet not connected');
+    }
+
+    try {
+      const signedTransaction = await phantom.signTransaction(transaction);
+      return signedTransaction;
+    } catch (err: any) {
+      console.error('Transaction signing error:', err);
+      throw new Error(err.message || 'Failed to sign transaction');
+    }
+  };
+
+  // Sign and send transaction with Phantom
+  const signAndSendTransaction = async (transaction: Transaction): Promise<string> => {
+    const phantom = getPhantom();
+    if (!phantom || !connected) {
+      throw new Error('Wallet not connected');
+    }
+
+    try {
+      const { signature } = await phantom.signAndSendTransaction(transaction);
+      return signature;
+    } catch (err: any) {
+      console.error('Transaction send error:', err);
+      throw new Error(err.message || 'Failed to send transaction');
+    }
+  };
+
   const value: WalletContextType = {
     connected,
     publicKey,
@@ -128,6 +166,9 @@ export const WalletContextProvider: FC<WalletContextProviderProps> = ({ children
     disconnect,
     connecting,
     error,
+    connection,
+    signTransaction: connected ? signTransaction : undefined,
+    signAndSendTransaction: connected ? signAndSendTransaction : undefined,
   };
 
   return (

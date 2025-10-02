@@ -35,7 +35,7 @@ export const NAVIGATION_CONFIG = {
   navItems: [] as { name: string; link: string }[],
 };
 
-// Utility function to get navigation items based on user state  
+// Utility function to get navigation items based on user state
 // Note: This is now superseded by useNavigation hook for dynamic page loading
 export const getNavigationItems = (user: User | null, isAuthenticated: boolean) => {
   // Start with base navigation items from config
@@ -45,17 +45,24 @@ export const getNavigationItems = (user: User | null, isAuthenticated: boolean) 
     action: 'route' as const
   }));
 
-  // Add user-specific navigation items
+  // Admin links go in leftButtons, not main navigation
+  const leftButtons: NavigationItem[] = [];
   if (isAuthenticated && user?.is_site_manager) {
-    navigationItems.push({
-      name: 'Site Admin',
-      href: '/dashboard',
+    leftButtons.push({
+      name: 'Home',
+      href: '/',
+      action: 'route'
+    });
+    leftButtons.push({
+      name: 'Exchange Admin',
+      href: '/exchange-admin',
       action: 'route'
     });
   }
 
   return {
     items: navigationItems,
+    leftButtons,
     rightButtons: isAuthenticated
       ? [{ name: 'Logout', href: '/logout', action: 'auth' as const }]
       : [
