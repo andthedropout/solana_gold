@@ -21,8 +21,10 @@ COPY --chown=node:node assets/package.json assets/*yarn* ./
 RUN yarn install && yarn cache clean
 
 ARG NODE_ENV="production"
+ARG VITE_API_BASE_URL=""
 ENV PATH="${PATH}:/node_modules/.bin" \
-    USER="node"
+    USER="node" \
+    VITE_API_BASE_URL="${VITE_API_BASE_URL}"
 
 COPY --chown=node:node . ..
 
