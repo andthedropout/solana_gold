@@ -224,17 +224,27 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
 # Caching
 # https://docs.djangoproject.com/en/5.1/topics/cache/
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": REDIS_URL,
+# Use dummy cache if Redis not available (production)
+if os.getenv("REDIS_URL"):
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        }
     }
-}
+else:
+    # No Redis available - use in-memory cache for production
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
 
-# Celery
-# https://docs.celeryproject.org/en/stable/userguide/configuration.html
-CELERY_BROKER_URL = REDIS_URL
-CELERY_RESULT_BACKEND = REDIS_URL
+# Celery (only configure if Redis available)
+if os.getenv("REDIS_URL"):
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
