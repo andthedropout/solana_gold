@@ -44,6 +44,8 @@ class GoldTokenService:
         self.treasury_wallet = Pubkey.from_string(settings.TREASURY_WALLET)
         self.dev_fund_wallet = Pubkey.from_string(settings.DEV_FUND_WALLET)
         self.liquidity_wallet = Pubkey.from_string(settings.LIQUIDITY_WALLET)
+        self.profit_wallet = Pubkey.from_string(settings.PROFIT_WALLET)
+        self.transaction_fee_wallet = Pubkey.from_string(settings.TRANSACTION_FEE_WALLET)
 
     def _load_mint_authority(self) -> Keypair:
         """Load mint authority keypair from settings"""
@@ -105,7 +107,7 @@ class GoldTokenService:
 
     def calculate_fees(
         self, sol_amount: Decimal, transaction_type: str
-    ) -> Tuple[Decimal, Decimal, Decimal]:
+    ) -> Tuple[Decimal, Decimal, Decimal, Decimal]:
         """
         Calculate fees for a transaction.
 
@@ -114,20 +116,20 @@ class GoldTokenService:
             transaction_type: 'buy' or 'sell'
 
         Returns:
-            Tuple of (treasury_fee, dev_fee, net_amount)
+            Tuple of (treasury_fee, profit_fee, transaction_fee, liquidity_amount)
         """
-        if transaction_type == 'buy':
-            treasury_rate = Decimal(settings.BUY_FEE_TREASURY) / Decimal('10000')
-            dev_rate = Decimal(settings.BUY_FEE_DEV) / Decimal('10000')
-        else:  # sell
-            treasury_rate = Decimal(settings.SELL_FEE_TREASURY) / Decimal('10000')
-            dev_rate = Decimal(settings.SELL_FEE_BURN) / Decimal('10000')
+        # Fee structure: 84% liquidity, 8% treasury, 8% profit, 0.24% transaction
+        liquidity_rate = Decimal('0.84')
+        treasury_rate = Decimal('0.08')
+        profit_rate = Decimal('0.08')
+        transaction_rate = Decimal('0.0024')
 
+        liquidity_amount = (sol_amount * liquidity_rate).quantize(Decimal('0.000000001'))
         treasury_fee = (sol_amount * treasury_rate).quantize(Decimal('0.000000001'))
-        dev_fee = (sol_amount * dev_rate).quantize(Decimal('0.000000001'))
-        net_amount = sol_amount - treasury_fee - dev_fee
+        profit_fee = (sol_amount * profit_rate).quantize(Decimal('0.000000001'))
+        transaction_fee = (sol_amount * transaction_rate).quantize(Decimal('0.000000001'))
 
-        return treasury_fee, dev_fee, net_amount
+        return treasury_fee, profit_fee, transaction_fee, liquidity_amount
 
     def get_or_create_associated_token_account(
         self, owner: Pubkey
@@ -158,12 +160,13 @@ class GoldTokenService:
         user_pubkey: Pubkey,
         sol_amount: Decimal,
         treasury_fee: Decimal,
-        dev_fee: Decimal,
-        net_to_liquidity: Decimal,
+        profit_fee: Decimal,
+        transaction_fee: Decimal,
+        liquidity_amount: Decimal,
     ) -> list:
         """
         Create instructions for buy transaction.
-        User sends SOL to liquidity/treasury/dev wallets.
+        User sends SOL to liquidity/treasury/profit/transaction_fee wallets.
         Backend will mint tokens separately after verification.
 
         Returns:
@@ -175,19 +178,19 @@ class GoldTokenService:
         def to_lamports(sol: Decimal) -> int:
             return int(sol * Decimal('1000000000'))
 
-        # Instruction 1: Transfer to liquidity pool
-        if net_to_liquidity > 0:
+        # Instruction 1: Transfer to liquidity pool (84%)
+        if liquidity_amount > 0:
             instructions.append(
                 transfer(
                     TransferParams(
                         from_pubkey=user_pubkey,
                         to_pubkey=self.liquidity_wallet,
-                        lamports=to_lamports(net_to_liquidity)
+                        lamports=to_lamports(liquidity_amount)
                     )
                 )
             )
 
-        # Instruction 2: Transfer to treasury
+        # Instruction 2: Transfer to treasury (8%)
         if treasury_fee > 0:
             instructions.append(
                 transfer(
@@ -199,14 +202,26 @@ class GoldTokenService:
                 )
             )
 
-        # Instruction 3: Transfer to dev fund
-        if dev_fee > 0:
+        # Instruction 3: Transfer to profit wallet (8%)
+        if profit_fee > 0:
             instructions.append(
                 transfer(
                     TransferParams(
                         from_pubkey=user_pubkey,
-                        to_pubkey=self.dev_fund_wallet,
-                        lamports=to_lamports(dev_fee)
+                        to_pubkey=self.profit_wallet,
+                        lamports=to_lamports(profit_fee)
+                    )
+                )
+            )
+
+        # Instruction 4: Transfer to transaction fee wallet (0.24%)
+        if transaction_fee > 0:
+            instructions.append(
+                transfer(
+                    TransferParams(
+                        from_pubkey=user_pubkey,
+                        to_pubkey=self.transaction_fee_wallet,
+                        lamports=to_lamports(transaction_fee)
                     )
                 )
             )

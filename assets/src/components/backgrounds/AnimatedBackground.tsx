@@ -61,6 +61,22 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           content = content.replace(/stop-color="#e7e0c9"/g, 'stop-color="var(--muted-foreground)"');
           content = content.replace(/stop-color="#cc0505"/g, 'stop-color="var(--accent)"');
 
+          // Remove color animations that override CSS variables (keep position/transform animations)
+          // This removes <animate> tags that change stroke, fill, or stop-color attributes
+          content = content.replace(/<animate[^>]*attributeName="stroke"[^>]*>[\s\S]*?<\/animate>/gi, '');
+          content = content.replace(/<animate[^>]*attributeName="fill"[^>]*>[\s\S]*?<\/animate>/gi, '');
+          content = content.replace(/<animate[^>]*attributeName="stop-color"[^>]*>[\s\S]*?<\/animate>/gi, '');
+
+          // Also remove hue-rotate filters that change colors
+          content = content.replace(/style="filter:hue-rotate\([^)]+\)"/g, '');
+
+          // For bokeh_up, make it mostly gold by using primary color for all particles
+          if (type === 'bokeh_up') {
+            // Replace all secondary and accent with primary to make it all gold
+            content = content.replace(/var\(--secondary\)/g, 'var(--primary)');
+            content = content.replace(/var\(--accent\)/g, 'var(--primary)');
+          }
+
           // Debug logging for waves_floor
           if (type === 'waves_floor') {
             console.log('🌊 waves_floor SVG before replacement:', content.substring(0, 500));

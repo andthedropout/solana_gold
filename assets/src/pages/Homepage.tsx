@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useWallet } from '@/components/WalletContextProvider';
-import { SimpleHeader } from '@/components/SimpleHeader';
 import { ConnectionPrompt } from '@/components/ConnectionPrompt';
 import { BalancePanel } from '@/components/BalancePanel';
 import { ExchangePanel } from '@/components/ExchangePanel';
 import { HowItWorksFooter } from '@/components/HowItWorksFooter';
 import { SystemStatusBanner } from '@/components/SystemStatusBanner';
 import { goldExchangeService } from '@/services/goldExchange';
+import AnimatedBackground from '@/components/backgrounds/AnimatedBackground';
 
 export const Homepage: React.FC = () => {
   const { connected } = useWallet();
@@ -27,32 +27,47 @@ export const Homepage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Header with prices */}
-      <SimpleHeader />
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* System Status Banner */}
-        {connected && <SystemStatusBanner initialized={systemInitialized} />}
-
-        {!connected ? (
-          // Not connected: Show connection prompt
-          <ConnectionPrompt />
-        ) : (
-          // Connected: Show two-column layout
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column: Balances */}
-            <div>
-              <BalancePanel />
-            </div>
-
-            {/* Right Column: Exchange */}
-            <div>
-              <ExchangePanel />
+      {/* Animated Background spanning hero and exchange sections */}
+      {connected ? (
+        <AnimatedBackground type="bokeh_up" opacity={0.2}>
+          {/* Hero Section */}
+          <div className="pt-20 pb-16 px-4 text-center">
+            <div className="max-w-4xl mx-auto space-y-6">
+              <div className="text-2xl md:text-4xl font-bold tracking-wide text-primary uppercase">
+                SOLGOLD
+              </div>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight font-serif text-foreground">
+                Set The Standard
+              </h1>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Main Content */}
+          <div className="container py-8">
+            {/* System Status Banner */}
+            <SystemStatusBanner initialized={systemInitialized} />
+
+            {/* Two-column layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Column: Exchange (2/3 width) */}
+              <div className="lg:col-span-2">
+                <ExchangePanel />
+              </div>
+
+              {/* Right Column: Balances (1/3 width) */}
+              <div className="lg:col-span-1">
+                <BalancePanel />
+              </div>
+            </div>
+          </div>
+        </AnimatedBackground>
+      ) : (
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Not connected: Show connection prompt */}
+          <ConnectionPrompt />
+        </div>
+      )}
 
       {/* How It Works Footer */}
       <HowItWorksFooter />

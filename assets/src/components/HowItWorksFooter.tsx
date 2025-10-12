@@ -3,90 +3,96 @@ import { Wallet, ArrowRightLeft, Coins } from 'lucide-react';
 
 export const HowItWorksFooter: React.FC = () => {
   return (
-    <div className="w-full bg-muted/30 border-t border-border py-12 px-4 mt-16">
-      <div className="max-w-5xl mx-auto">
+    <div className="w-full bg-gradient-to-b from-background via-muted/20 to-background border-t border-border py-16 mt-20">
+      <div className="container">
         {/* Heading */}
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-foreground mb-2">
-            How It Works
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-serif">
+            What is SOLGOLD?
           </h2>
-          <p className="text-muted-foreground">
-            Exchange Solana for gold-backed tokens in three simple steps
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            A cryptocurrency gold certificate on the Solana blockchain
           </p>
         </div>
 
-        {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Step 1 */}
-          <div className="flex flex-col items-center text-center">
-            <div className="mb-4 p-4 bg-primary/10 rounded-full">
-              <Wallet className="h-10 w-10 text-primary" />
+        {/* Main Explanation Card */}
+        <div className="p-8 bg-card border-2 border-primary/20 rounded-xl shadow-lg mb-8">
+          <div className="flex items-center justify-center mb-6">
+            <div className="p-4 bg-primary/10 rounded-full">
+              <Coins className="h-12 w-12 text-primary" />
             </div>
-            <div className="mb-2 px-3 py-1 bg-primary/20 rounded-full">
-              <span className="text-sm font-semibold text-primary">Step 1</span>
-            </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              Connect Wallet
-            </h3>
-            <p className="text-muted-foreground text-sm">
-              Connect your Phantom or any Solana wallet securely. Your funds stay safe with you.
-            </p>
           </div>
 
-          {/* Step 2 */}
-          <div className="flex flex-col items-center text-center">
-            <div className="mb-4 p-4 bg-primary/10 rounded-full">
-              <ArrowRightLeft className="h-10 w-10 text-primary" />
-            </div>
-            <div className="mb-2 px-3 py-1 bg-primary/20 rounded-full">
-              <span className="text-sm font-semibold text-primary">Step 2</span>
-            </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              Enter Amount
-            </h3>
-            <p className="text-muted-foreground text-sm">
-              Choose how much SOL you want to exchange. We'll show you exactly how much gold-backed tokens you'll receive.
-            </p>
-          </div>
+          <p className="text-base md:text-lg text-foreground text-center mb-6 leading-relaxed">
+            SOLGOLD is a digital gold certificate that lives on the Solana blockchain. Each token represents
+            <span className="font-bold text-primary"> $10 worth of physical gold</span>, giving you instant exposure
+            to gold prices without the hassle of storing physical precious metals.
+          </p>
 
-          {/* Step 3 */}
-          <div className="flex flex-col items-center text-center">
-            <div className="mb-4 p-4 bg-primary/10 rounded-full">
-              <Coins className="h-10 w-10 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <div className="text-center p-4">
+              <div className="text-2xl font-bold text-primary mb-2">1 SOLGOLD</div>
+              <div className="text-sm text-muted-foreground">= $10 worth of gold</div>
             </div>
-            <div className="mb-2 px-3 py-1 bg-primary/20 rounded-full">
-              <span className="text-sm font-semibold text-primary">Step 3</span>
+            <div className="text-center p-4">
+              <div className="text-2xl font-bold text-primary mb-2">Instant</div>
+              <div className="text-sm text-muted-foreground">Trading on Solana</div>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              Get Gold Tokens
-            </h3>
-            <p className="text-muted-foreground text-sm">
-              Confirm the exchange and receive sGOLD tokens instantly. Each token represents $10 worth of gold.
-            </p>
+            <div className="text-center p-4">
+              <div className="text-2xl font-bold text-primary mb-2">Real-time</div>
+              <div className="text-sm text-muted-foreground">Gold price tracking</div>
+            </div>
           </div>
         </div>
 
-        {/* Info Box */}
-        <div className="mt-10 p-6 bg-card border border-border rounded-lg">
-          <h3 className="font-semibold text-foreground mb-2 text-center">
-            What are sGOLD tokens?
-          </h3>
-          <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto">
-            sGOLD tokens are digital tokens backed by real gold prices. Each token is pegged to $10 worth of gold,
-            so when gold prices go up, your tokens' value goes up too. You can hold them, trade them,
-            or exchange them back to SOL anytime.
-          </p>
+        {/* Benefits Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="group p-6 bg-card rounded-xl border-2 border-primary/10 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 text-center">
+            <div className="mb-4 p-3 bg-primary/10 rounded-lg w-fit mx-auto group-hover:bg-primary/20 transition-colors">
+              <Wallet className="h-7 w-7 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold text-foreground mb-3">
+              Easy to Hold
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Store value in gold without vaults, insurance, or physical storage concerns.
+            </p>
+          </div>
+
+          <div className="group p-6 bg-card rounded-xl border-2 border-primary/10 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 text-center">
+            <div className="mb-4 p-3 bg-primary/10 rounded-lg w-fit mx-auto group-hover:bg-primary/20 transition-colors">
+              <ArrowRightLeft className="h-7 w-7 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold text-foreground mb-3">
+              Instant Trading
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Buy or sell instantly on Solana. No waiting periods or complicated processes.
+            </p>
+          </div>
+
+          <div className="group p-6 bg-card rounded-xl border-2 border-primary/10 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 text-center">
+            <div className="mb-4 p-3 bg-primary/10 rounded-lg w-fit mx-auto group-hover:bg-primary/20 transition-colors">
+              <Coins className="h-7 w-7 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold text-foreground mb-3">
+              Price Appreciation
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              When gold prices rise, your SOLGOLD value rises with it automatically.
+            </p>
+          </div>
         </div>
 
         {/* Need Help */}
-        <div className="mt-8 text-center">
+        <div className="text-center">
           <p className="text-sm text-muted-foreground">
             Need test SOL for the devnet?{' '}
             <a
               href="https://faucet.solana.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline font-medium"
+              className="text-primary hover:underline font-semibold"
             >
               Get free devnet SOL here
             </a>

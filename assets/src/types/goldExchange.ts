@@ -10,8 +10,11 @@ export interface Quote {
   sol_price_usd: string;
   fees: {
     treasury: number;
-    dev_fund: number;
+    profit: number;
+    transaction: number;
     total_fee_sol: number;
+    // Legacy fields (kept for backwards compatibility)
+    dev_fund?: number;
   };
   net_sol_to_liquidity: string;
   exchange_rate: string;
@@ -56,6 +59,8 @@ export interface GoldTransaction {
   fees_collected: string;
   treasury_fee: string;
   dev_fee: string;
+  profit_fee: string;
+  transaction_fee: string;
   tx_signature: string | null;
   user_token_account: string | null;
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';

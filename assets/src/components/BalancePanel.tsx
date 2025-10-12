@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useWallet } from '@/components/WalletContextProvider';
 import { goldExchangeService } from '@/services/goldExchange';
 import { RefreshCw, Coins, Wallet } from 'lucide-react';
-import type { BalanceResponse } from '@/types/goldExchange';
+import type { BalanceResponse, PriceResponse } from '@/types/goldExchange';
 
 export const BalancePanel: React.FC = () => {
   const { publicKey } = useWallet();
   const [balance, setBalance] = useState<BalanceResponse | null>(null);
+  const [prices, setPrices] = useState<PriceResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,8 +27,20 @@ export const BalancePanel: React.FC = () => {
     }
   };
 
+  const fetchPrices = async () => {
+    try {
+      const data = await goldExchangeService.getCurrentPrices();
+      setPrices(data);
+    } catch (err) {
+      console.error('Failed to fetch prices:', err);
+    }
+  };
+
   useEffect(() => {
     fetchBalance();
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 60000); // Update prices every minute
+    return () => clearInterval(interval);
   }, [publicKey]);
 
   const formatNumber = (num: number) => {
@@ -81,9 +94,9 @@ export const BalancePanel: React.FC = () => {
       {/* Balance Display */}
       {balance && (
         <div className="space-y-4">
-          {/* sGOLD Balance */}
+          {/* SOLGOLD Balance */}
           <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <Coins className="h-5 w-5 text-primary" />
               <span className="text-sm font-medium text-muted-foreground">Gold Tokens</span>
             </div>
@@ -91,16 +104,16 @@ export const BalancePanel: React.FC = () => {
               <span className="text-3xl font-bold text-foreground">
                 {formatNumber(balance.sgold_balance)}
               </span>
-              <span className="text-sm text-muted-foreground">sGOLD</span>
+              <span className="text-sm text-muted-foreground">SOLGOLD</span>
+              <span className="text-sm text-muted-foreground ml-1">
+                ≈ {formatCurrency(balance.usd_value)}
+              </span>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              ≈ {formatCurrency(balance.usd_value)}
-            </p>
           </div>
 
           {/* SOL Balance */}
           <div className="p-4 bg-muted/50 border border-border rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <Wallet className="h-5 w-5 text-muted-foreground" />
               <span className="text-sm font-medium text-muted-foreground">Solana Balance</span>
             </div>
@@ -109,8 +122,31 @@ export const BalancePanel: React.FC = () => {
                 {formatNumber(balance.sol_balance)}
               </span>
               <span className="text-sm text-muted-foreground">SOL</span>
+              {prices && (
+                <span className="text-sm text-muted-foreground ml-1">
+                  ≈ {formatCurrency(balance.sol_balance * prices.sol_price_usd)}
+                </span>
+              )}
             </div>
           </div>
+
+          {/* Current Prices */}
+          {prices && (
+            <div className="pt-4 mt-4 border-t border-border space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-muted-foreground">Gold</span>
+                <span className="font-medium text-foreground">{formatCurrency(prices.gold_price_usd)}/oz</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-muted-foreground">SOL</span>
+                <span className="font-medium text-foreground">{formatCurrency(prices.sol_price_usd)}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-muted-foreground">1 SOLGOLD</span>
+                <span className="font-medium text-foreground">$10 worth of gold</span>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

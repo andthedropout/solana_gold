@@ -28,7 +28,7 @@ interface NavigationButton {
   action: 'route' | 'auth';
 }
 
-// export const PREFERRED_THEME = 'claude';
+export const PREFERRED_THEME = 'gold-purple';
 
 export const NAVIGATION_CONFIG = {
   // Navigation items are populated by CMS system - keep this array for dynamic loading

@@ -58,7 +58,7 @@ const Footer = (props: FooterProps) => {
     },
   ];
   
-  const copyright = props.copyright || `© 2024 ${settings.company_name}. All rights reserved.`;
+  const copyright = props.copyright || `© ${new Date().getFullYear()} Compound Capital Group LLC. All rights reserved.`;
   
   const bottomLinks = props.bottomLinks || [
     { text: "Terms of Service", url: "/terms" },

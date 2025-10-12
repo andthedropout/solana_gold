@@ -52,6 +52,8 @@ class GoldTransactionAdmin(admin.ModelAdmin):
         ('Fees', {
             'fields': (
                 'treasury_fee',
+                'profit_fee',
+                'transaction_fee',
                 'dev_fee',
                 'fees_collected',
             )
@@ -91,6 +93,29 @@ class ExchangeQuoteAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'quote_id']
     search_fields = ['quote_id', 'user_wallet']
     date_hierarchy = 'created_at'
+
+    fieldsets = (
+        ('Quote Information', {
+            'fields': ('quote_id', 'user_wallet', 'action')
+        }),
+        ('Amounts', {
+            'fields': ('sol_amount', 'token_amount')
+        }),
+        ('Prices', {
+            'fields': ('gold_price_usd', 'sol_price_usd')
+        }),
+        ('Fee Breakdown', {
+            'fields': (
+                'treasury_fee',
+                'profit_fee',
+                'transaction_fee',
+                'dev_fee',
+            )
+        }),
+        ('Status', {
+            'fields': ('used', 'created_at', 'expires_at')
+        }),
+    )
 
     def quote_id_short(self, obj):
         return f"{obj.quote_id[:8]}..."

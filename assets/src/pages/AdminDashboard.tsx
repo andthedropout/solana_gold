@@ -22,8 +22,10 @@ interface DashboardData {
   wallets: {
     mint_authority: WalletInfo;
     treasury: WalletInfo;
-    dev_fund: WalletInfo;
+    profit: WalletInfo;
+    transaction_fee: WalletInfo;
     liquidity: WalletInfo;
+    dev_fund: WalletInfo;
   };
   prices: {
     gold_price_usd: number;

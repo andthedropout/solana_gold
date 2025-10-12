@@ -41,12 +41,16 @@ def admin_dashboard(request):
         treasury_pubkey = Pubkey.from_string(settings.TREASURY_WALLET)
         dev_fund_pubkey = Pubkey.from_string(settings.DEV_FUND_WALLET)
         liquidity_pubkey = Pubkey.from_string(settings.LIQUIDITY_WALLET)
+        profit_pubkey = Pubkey.from_string(settings.PROFIT_WALLET)
+        transaction_fee_pubkey = Pubkey.from_string(settings.TRANSACTION_FEE_WALLET)
 
         # Get SOL balances for each wallet
         mint_authority_balance = client.get_balance(mint_authority_pubkey).value / 1_000_000_000
         treasury_balance = client.get_balance(treasury_pubkey).value / 1_000_000_000
         dev_fund_balance = client.get_balance(dev_fund_pubkey).value / 1_000_000_000
         liquidity_balance = client.get_balance(liquidity_pubkey).value / 1_000_000_000
+        profit_balance = client.get_balance(profit_pubkey).value / 1_000_000_000
+        transaction_fee_balance = client.get_balance(transaction_fee_pubkey).value / 1_000_000_000
 
         # Get current prices
         gold_price, sol_price = PriceOracle.get_prices()
@@ -97,19 +101,31 @@ def admin_dashboard(request):
                     'address': settings.TREASURY_WALLET,
                     'balance_sol': float(treasury_balance),
                     'balance_usd': float(Decimal(str(treasury_balance)) * sol_price),
-                    'description': f'Receives {settings.BUY_FEE_TREASURY / 100}% fee from purchases',
+                    'description': 'Receives 8% fee for gold administration',
                 },
-                'dev_fund': {
-                    'address': settings.DEV_FUND_WALLET,
-                    'balance_sol': float(dev_fund_balance),
-                    'balance_usd': float(Decimal(str(dev_fund_balance)) * sol_price),
-                    'description': f'Receives {settings.BUY_FEE_DEV / 100}% fee from purchases',
+                'profit': {
+                    'address': settings.PROFIT_WALLET,
+                    'balance_sol': float(profit_balance),
+                    'balance_usd': float(Decimal(str(profit_balance)) * sol_price),
+                    'description': 'Receives 8% fee for minting profit',
+                },
+                'transaction_fee': {
+                    'address': settings.TRANSACTION_FEE_WALLET,
+                    'balance_sol': float(transaction_fee_balance),
+                    'balance_usd': float(Decimal(str(transaction_fee_balance)) * sol_price),
+                    'description': 'Receives 0.24% transaction processing fee',
                 },
                 'liquidity': {
                     'address': settings.LIQUIDITY_WALLET,
                     'balance_sol': float(liquidity_balance),
                     'balance_usd': float(Decimal(str(liquidity_balance)) * sol_price),
-                    'description': f'Receives net SOL from purchases ({100 - (settings.BUY_FEE_TREASURY + settings.BUY_FEE_DEV) / 100}%)',
+                    'description': 'Receives net SOL from purchases (84%)',
+                },
+                'dev_fund': {
+                    'address': settings.DEV_FUND_WALLET,
+                    'balance_sol': float(dev_fund_balance),
+                    'balance_usd': float(Decimal(str(dev_fund_balance)) * sol_price),
+                    'description': 'Development fund (currently inactive)',
                 },
             },
             'prices': {
@@ -172,9 +188,9 @@ def withdraw_from_wallet(request):
         amount_sol = Decimal(str(request.data.get('amount_sol', 0)))
 
         # Validate inputs
-        if not wallet_type or wallet_type not in ['mint_authority', 'treasury', 'dev_fund', 'liquidity']:
+        if not wallet_type or wallet_type not in ['mint_authority', 'treasury', 'dev_fund', 'liquidity', 'profit', 'transaction_fee']:
             return Response(
-                {'error': 'Invalid wallet type. Must be: mint_authority, treasury, dev_fund, or liquidity'},
+                {'error': 'Invalid wallet type. Must be: mint_authority, treasury, dev_fund, liquidity, profit, or transaction_fee'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -210,7 +226,7 @@ def withdraw_from_wallet(request):
                 )
             keypair = Keypair.from_bytes(base58.b58decode(settings.DEV_FUND_KEYPAIR))
             wallet_name = 'Dev Fund'
-        else:  # liquidity
+        elif wallet_type == 'liquidity':
             if not hasattr(settings, 'LIQUIDITY_KEYPAIR'):
                 return Response(
                     {'error': 'Liquidity keypair not configured. Run: python manage.py regenerate_wallets'},
@@ -218,6 +234,24 @@ def withdraw_from_wallet(request):
                 )
             keypair = Keypair.from_bytes(base58.b58decode(settings.LIQUIDITY_KEYPAIR))
             wallet_name = 'Liquidity'
+        elif wallet_type == 'profit':
+            if not hasattr(settings, 'PROFIT_KEYPAIR'):
+                return Response(
+                    {'error': 'Profit keypair not configured'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            keypair_data = eval(settings.PROFIT_KEYPAIR)  # Convert list string to actual list
+            keypair = Keypair.from_bytes(bytes(keypair_data))
+            wallet_name = 'Profit'
+        else:  # transaction_fee
+            if not hasattr(settings, 'TRANSACTION_FEE_KEYPAIR'):
+                return Response(
+                    {'error': 'Transaction fee keypair not configured'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            keypair_data = eval(settings.TRANSACTION_FEE_KEYPAIR)  # Convert list string to actual list
+            keypair = Keypair.from_bytes(bytes(keypair_data))
+            wallet_name = 'Transaction Fee'
 
         # Connect to Solana
         from solana.rpc.api import Client

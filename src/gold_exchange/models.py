@@ -14,6 +14,8 @@ class SystemWallet(models.Model):
         ('treasury', 'Treasury'),
         ('dev_fund', 'Development Fund'),
         ('liquidity', 'Liquidity Pool'),
+        ('profit', 'Profit Wallet'),
+        ('transaction_fee', 'Transaction Fee Wallet'),
     ]
 
     wallet_type = models.CharField(
@@ -119,6 +121,18 @@ class GoldTransaction(models.Model):
         default=Decimal('0'),
         help_text="Fee sent to dev fund"
     )
+    profit_fee = models.DecimalField(
+        max_digits=20,
+        decimal_places=9,
+        default=Decimal('0'),
+        help_text="Fee sent to profit wallet"
+    )
+    transaction_fee = models.DecimalField(
+        max_digits=20,
+        decimal_places=9,
+        default=Decimal('0'),
+        help_text="Transaction processing fee"
+    )
 
     # Blockchain data
     tx_signature = models.CharField(
@@ -206,7 +220,7 @@ class GoldTransaction(models.Model):
     @property
     def total_fees(self):
         """Calculate total fees"""
-        return self.treasury_fee + self.dev_fee
+        return self.treasury_fee + self.dev_fee + self.profit_fee + self.transaction_fee
 
 
 class ExchangeQuote(models.Model):
@@ -232,6 +246,18 @@ class ExchangeQuote(models.Model):
     # Fee breakdown
     treasury_fee = models.DecimalField(max_digits=20, decimal_places=9)
     dev_fee = models.DecimalField(max_digits=20, decimal_places=9)
+    profit_fee = models.DecimalField(
+        max_digits=20,
+        decimal_places=9,
+        default=Decimal('0'),
+        help_text="Fee sent to profit wallet"
+    )
+    transaction_fee = models.DecimalField(
+        max_digits=20,
+        decimal_places=9,
+        default=Decimal('0'),
+        help_text="Transaction processing fee"
+    )
 
     # Expiration
     created_at = models.DateTimeField(auto_now_add=True)

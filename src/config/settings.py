@@ -343,6 +343,8 @@ MINT_AUTHORITY_KEYPAIR = os.getenv('MINT_AUTHORITY_KEYPAIR', '')
 TREASURY_WALLET = os.getenv('TREASURY_WALLET', '')
 DEV_FUND_WALLET = os.getenv('DEV_FUND_WALLET', '')
 LIQUIDITY_WALLET = os.getenv('LIQUIDITY_WALLET', '')
+PROFIT_WALLET = os.getenv('PROFIT_WALLET', '')
+TRANSACTION_FEE_WALLET = os.getenv('TRANSACTION_FEE_WALLET', '')
 
 # Fee structure (basis points, e.g., 300 = 3%)
 BUY_FEE_TREASURY = int(os.getenv('BUY_FEE_TREASURY', '300'))

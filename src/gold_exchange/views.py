@@ -52,10 +52,13 @@ def get_quote(request):
         # Get current prices
         gold_price, sol_price = PriceOracle.get_prices()
 
-        # Simple fee calculation (5% total: 3% treasury + 2% dev)
-        treasury_fee = sol_amount * Decimal('0.03')
-        dev_fee = sol_amount * Decimal('0.02')
-        net_sol = sol_amount - treasury_fee - dev_fee
+        # Fee calculation for $12.50 to mint $10 gold certificate
+        # Breakdown: 84% liquidity, 8% treasury, 8% profit, 0.24% transaction fees
+        liquidity_amount = sol_amount * Decimal('0.84')
+        treasury_fee = sol_amount * Decimal('0.08')
+        profit_fee = sol_amount * Decimal('0.08')
+        transaction_fee = sol_amount * Decimal('0.0024')
+        net_sol = liquidity_amount  # Liquidity gets the main portion
 
         # Calculate token amount: Convert SOL → USD → gold ounces → $10 units
         if action == 'buy':
@@ -83,11 +86,14 @@ def get_quote(request):
             gold_price_usd=gold_price,
             sol_price_usd=sol_price,
             treasury_fee=treasury_fee,
-            dev_fee=dev_fee,
+            dev_fee=Decimal('0'),  # No longer used, kept for backwards compatibility
+            profit_fee=profit_fee,
+            transaction_fee=transaction_fee,
             expires_at=expires_at,
         )
 
         # Prepare response
+        total_fees = treasury_fee + profit_fee + transaction_fee
         response_data = {
             'quote_id': quote_id,
             'sol_amount': sol_amount,
@@ -96,10 +102,11 @@ def get_quote(request):
             'sol_price_usd': sol_price,
             'fees': {
                 'treasury': float(treasury_fee),
-                'dev_fund': float(dev_fee),
-                'total_fee_sol': float(treasury_fee + dev_fee),
+                'profit': float(profit_fee),
+                'transaction': float(transaction_fee),
+                'total_fee_sol': float(total_fees),
             },
-            'net_sol_to_liquidity': float(net_sol),
+            'net_sol_to_liquidity': float(liquidity_amount),
             'exchange_rate': '1 sGOLD unit = $10 worth of gold',
             'expires_in': 30,
             'expires_at': expires_at,
@@ -161,6 +168,7 @@ def buy_initiate(request):
         quote.save()
 
         # Create transaction record
+        total_fees = quote.treasury_fee + quote.profit_fee + quote.transaction_fee
         gold_tx = GoldTransaction.objects.create(
             user_wallet=wallet_address,
             transaction_type='buy',
@@ -169,8 +177,10 @@ def buy_initiate(request):
             gold_price_usd=quote.gold_price_usd,
             sol_price_usd=quote.sol_price_usd,
             treasury_fee=quote.treasury_fee,
-            dev_fee=quote.dev_fee,
-            fees_collected=quote.treasury_fee + quote.dev_fee,
+            dev_fee=Decimal('0'),  # No longer used
+            profit_fee=quote.profit_fee,
+            transaction_fee=quote.transaction_fee,
+            fees_collected=total_fees,
             status='pending',
             quote_id=quote_id,
             quote_expires_at=quote.expires_at,
@@ -188,34 +198,18 @@ def buy_initiate(request):
         user_pubkey = Pubkey.from_string(wallet_address)
         client = Client(settings.SOLANA_RPC_URL, commitment=Confirmed)
 
-        treasury_fee, dev_fee, net_sol = service.calculate_fees(quote.sol_amount, 'buy')
+        # Calculate fees: treasury, profit, transaction, liquidity
+        treasury_fee, profit_fee, transaction_fee, liquidity_amount = service.calculate_fees(quote.sol_amount, 'buy')
 
-        # Convert to lamports
-        net_sol_lamports = int(net_sol * Decimal('1000000000'))
-        treasury_fee_lamports = int(treasury_fee * Decimal('1000000000'))
-        dev_fee_lamports = int(dev_fee * Decimal('1000000000'))
-
-        # Build transfer instructions
-        instructions = [
-            # Transfer to liquidity pool (95% of SOL)
-            transfer(TransferParams(
-                from_pubkey=user_pubkey,
-                to_pubkey=service.liquidity_wallet,
-                lamports=net_sol_lamports
-            )),
-            # Transfer treasury fee (3%)
-            transfer(TransferParams(
-                from_pubkey=user_pubkey,
-                to_pubkey=service.treasury_wallet,
-                lamports=treasury_fee_lamports
-            )),
-            # Transfer dev fund fee (2%)
-            transfer(TransferParams(
-                from_pubkey=user_pubkey,
-                to_pubkey=service.dev_fund_wallet,
-                lamports=dev_fee_lamports
-            )),
-        ]
+        # Build transfer instructions for all 4 wallets
+        instructions = service.create_buy_transaction_instructions(
+            user_pubkey=user_pubkey,
+            sol_amount=quote.sol_amount,
+            treasury_fee=treasury_fee,
+            profit_fee=profit_fee,
+            transaction_fee=transaction_fee,
+            liquidity_amount=liquidity_amount
+        )
 
         # Get recent blockhash
         recent_blockhash = client.get_latest_blockhash().value.blockhash

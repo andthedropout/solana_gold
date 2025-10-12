@@ -131,6 +131,12 @@ export const useTheme = () => {
     console.log('--background:', root.style.getPropertyValue('--background'));
     console.log('--primary:', root.style.getPropertyValue('--primary'));
     console.log('--foreground:', root.style.getPropertyValue('--foreground'));
+    console.log('--font-sans:', root.style.getPropertyValue('--font-sans'));
+    console.log('--font-serif:', root.style.getPropertyValue('--font-serif'));
+
+    // Check computed style on body
+    const bodyStyle = window.getComputedStyle(document.body);
+    console.log('💡 Body computed font-family:', bodyStyle.fontFamily);
   };
 
   const refreshTheme = async () => {
