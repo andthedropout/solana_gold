@@ -20,15 +20,35 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
-export function ThemeProvider({ 
-  children, 
-  defaultTheme = "system", 
-  storageKey = "vite-ui-theme", 
-  ...props 
+// Helper function to determine theme based on time of day
+const getTimeBasedTheme = (): "dark" | "light" => {
+  const hour = new Date().getHours();
+  // Dark mode from 6 PM (18:00) to 6 AM (6:00)
+  // Light mode from 6 AM (6:00) to 6 PM (18:00)
+  const isDarkTime = hour >= 18 || hour < 6;
+  return isDarkTime ? "dark" : "light";
+}
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  storageKey = "vite-ui-theme",
+  ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  )
+  const [theme, setTheme] = useState<Theme>(() => {
+    const stored = localStorage.getItem(storageKey) as Theme;
+    console.log('🎛️ ThemeProvider: Stored theme in localStorage:', stored);
+
+    // If no stored theme or stored as "system", use time-based
+    if (!stored || stored === "system") {
+      const timeTheme = getTimeBasedTheme();
+      console.log('🎛️ ThemeProvider: Initializing with time-based theme:', timeTheme, `(${new Date().getHours()}:00)`);
+      // Don't return the actual theme, return "system" so the useEffect triggers time-based logic
+      return defaultTheme;
+    }
+
+    return stored;
+  })
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -36,13 +56,19 @@ export function ThemeProvider({
     root.classList.remove("light", "dark")
 
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light"
+      // Use time-based theme instead of system preference
+      const timeBasedTheme = getTimeBasedTheme();
+      console.log('🎛️ ThemeProvider: Time-based theme applied:', timeBasedTheme, `(${new Date().getHours()}:00)`);
+      root.classList.add(timeBasedTheme)
 
-      console.log('🎛️ ThemeProvider: System theme detected:', systemTheme);
-      root.classList.add(systemTheme)
-      return
+      // Check every minute if we need to switch themes
+      const interval = setInterval(() => {
+        const newTimeBasedTheme = getTimeBasedTheme();
+        root.classList.remove("light", "dark");
+        root.classList.add(newTimeBasedTheme);
+      }, 60000); // Check every minute
+
+      return () => clearInterval(interval);
     }
 
     console.log('🎛️ ThemeProvider: Setting theme class:', theme);
