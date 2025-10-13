@@ -20,11 +20,10 @@ interface DashboardData {
     system_initialized: boolean;
   };
   wallets: {
-    mint_authority: WalletInfo;
+    liquidity_mint: WalletInfo;
     treasury: WalletInfo;
     profit: WalletInfo;
     transaction_fee: WalletInfo;
-    liquidity: WalletInfo;
     dev_fund: WalletInfo;
   };
   prices: {

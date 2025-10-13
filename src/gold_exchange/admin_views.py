@@ -40,15 +40,14 @@ def admin_dashboard(request):
 
         treasury_pubkey = Pubkey.from_string(settings.TREASURY_WALLET)
         dev_fund_pubkey = Pubkey.from_string(settings.DEV_FUND_WALLET)
-        liquidity_pubkey = Pubkey.from_string(settings.LIQUIDITY_WALLET)
         profit_pubkey = Pubkey.from_string(settings.PROFIT_WALLET)
         transaction_fee_pubkey = Pubkey.from_string(settings.TRANSACTION_FEE_WALLET)
 
         # Get SOL balances for each wallet
+        # Note: mint_authority also serves as liquidity wallet (combined for devnet)
         mint_authority_balance = client.get_balance(mint_authority_pubkey).value / 1_000_000_000
         treasury_balance = client.get_balance(treasury_pubkey).value / 1_000_000_000
         dev_fund_balance = client.get_balance(dev_fund_pubkey).value / 1_000_000_000
-        liquidity_balance = client.get_balance(liquidity_pubkey).value / 1_000_000_000
         profit_balance = client.get_balance(profit_pubkey).value / 1_000_000_000
         transaction_fee_balance = client.get_balance(transaction_fee_pubkey).value / 1_000_000_000
 
@@ -91,41 +90,35 @@ def admin_dashboard(request):
                 'system_initialized': bool(settings.SGOLD_MINT_ADDRESS),
             },
             'wallets': {
-                'mint_authority': {
+                'liquidity_mint': {
                     'address': mint_authority_address,
                     'balance_sol': float(mint_authority_balance),
                     'balance_usd': float(Decimal(str(mint_authority_balance)) * sol_price),
-                    'description': 'Has authority to mint sGOLD tokens',
+                    'description': 'Liquidity pool (83.76%) + Mint authority for sGOLD tokens',
                 },
                 'treasury': {
                     'address': settings.TREASURY_WALLET,
                     'balance_sol': float(treasury_balance),
                     'balance_usd': float(Decimal(str(treasury_balance)) * sol_price),
-                    'description': 'Receives 8% fee for gold administration',
+                    'description': 'Receives 8% - Used to buy physical gold',
                 },
                 'profit': {
                     'address': settings.PROFIT_WALLET,
                     'balance_sol': float(profit_balance),
                     'balance_usd': float(Decimal(str(profit_balance)) * sol_price),
-                    'description': 'Receives 8% fee for minting profit',
+                    'description': 'Receives 8% - Business profit',
                 },
                 'transaction_fee': {
                     'address': settings.TRANSACTION_FEE_WALLET,
                     'balance_sol': float(transaction_fee_balance),
                     'balance_usd': float(Decimal(str(transaction_fee_balance)) * sol_price),
-                    'description': 'Receives 0.24% transaction processing fee',
-                },
-                'liquidity': {
-                    'address': settings.LIQUIDITY_WALLET,
-                    'balance_sol': float(liquidity_balance),
-                    'balance_usd': float(Decimal(str(liquidity_balance)) * sol_price),
-                    'description': 'Receives net SOL from purchases (84%)',
+                    'description': 'Receives 0.24% - Operational costs',
                 },
                 'dev_fund': {
                     'address': settings.DEV_FUND_WALLET,
                     'balance_sol': float(dev_fund_balance),
                     'balance_usd': float(Decimal(str(dev_fund_balance)) * sol_price),
-                    'description': 'Development fund (currently inactive)',
+                    'description': 'Development fund (currently 0%)',
                 },
             },
             'prices': {
@@ -188,9 +181,9 @@ def withdraw_from_wallet(request):
         amount_sol = Decimal(str(request.data.get('amount_sol', 0)))
 
         # Validate inputs
-        if not wallet_type or wallet_type not in ['mint_authority', 'treasury', 'dev_fund', 'liquidity', 'profit', 'transaction_fee']:
+        if not wallet_type or wallet_type not in ['liquidity_mint', 'treasury', 'dev_fund', 'profit', 'transaction_fee']:
             return Response(
-                {'error': 'Invalid wallet type. Must be: mint_authority, treasury, dev_fund, liquidity, profit, or transaction_fee'},
+                {'error': 'Invalid wallet type. Must be: liquidity_mint, treasury, dev_fund, profit, or transaction_fee'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -207,9 +200,9 @@ def withdraw_from_wallet(request):
             )
 
         # Get the appropriate keypair
-        if wallet_type == 'mint_authority':
+        if wallet_type == 'liquidity_mint':
             keypair = Keypair.from_bytes(base58.b58decode(settings.MINT_AUTHORITY_KEYPAIR))
-            wallet_name = 'Mint Authority'
+            wallet_name = 'Liquidity + Mint Authority'
         elif wallet_type == 'treasury':
             if not hasattr(settings, 'TREASURY_KEYPAIR'):
                 return Response(
@@ -226,14 +219,6 @@ def withdraw_from_wallet(request):
                 )
             keypair = Keypair.from_bytes(base58.b58decode(settings.DEV_FUND_KEYPAIR))
             wallet_name = 'Dev Fund'
-        elif wallet_type == 'liquidity':
-            if not hasattr(settings, 'LIQUIDITY_KEYPAIR'):
-                return Response(
-                    {'error': 'Liquidity keypair not configured. Run: python manage.py regenerate_wallets'},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-            keypair = Keypair.from_bytes(base58.b58decode(settings.LIQUIDITY_KEYPAIR))
-            wallet_name = 'Liquidity'
         elif wallet_type == 'profit':
             if not hasattr(settings, 'PROFIT_KEYPAIR'):
                 return Response(

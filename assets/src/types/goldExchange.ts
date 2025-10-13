@@ -47,6 +47,23 @@ export interface BuyConfirmResponse {
   message: string;
 }
 
+export interface SellInitiateResponse {
+  exchange_id: number;
+  serialized_transaction: string;
+  total_sgold: number;
+  expected_sol: number;
+  expires_at: string;
+}
+
+export interface SellConfirmResponse {
+  status: string;
+  tx_signature: string;
+  sgold_burned: number;
+  sol_received: number;
+  user_ata: string;
+  message: string;
+}
+
 export interface GoldTransaction {
   id: number;
   user_wallet: string;

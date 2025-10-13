@@ -11,6 +11,10 @@ urlpatterns = [
     path('buy/initiate', views.buy_initiate, name='buy_initiate'),
     path('buy/confirm', views.buy_confirm, name='buy_confirm'),
 
+    # Sell endpoints
+    path('sell/initiate', views.sell_initiate, name='sell_initiate'),
+    path('sell/confirm', views.sell_confirm, name='sell_confirm'),
+
     # Balance and price endpoints
     path('balance/<str:wallet_address>', views.get_balance, name='get_balance'),
     path('price', views.get_price, name='get_price'),

@@ -37,7 +37,7 @@ export const Homepage: React.FC = () => {
               <div className="text-2xl md:text-4xl font-bold tracking-wide text-primary uppercase">
                 SOLGOLD
               </div>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight font-serif text-foreground">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight font-serif text-foreground underline decoration-primary decoration-4 underline-offset-8">
                 Set The Standard
               </h1>
             </div>

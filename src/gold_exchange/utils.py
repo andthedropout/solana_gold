@@ -87,22 +87,28 @@ class PriceOracle:
         for api in apis:
             try:
                 response = requests.get(api['url'], timeout=5)
+                logger.info(f"SOL price API response status: {response.status_code}")
                 if response.ok:
                     data = response.json()
+                    logger.info(f"SOL price API response data: {data}")
                     price = api['extract'](data)
                     if price and price > 0:
                         price_decimal = Decimal(str(price))
                         # Cache the price
                         cache.set(cls.SOL_CACHE_KEY, float(price), cls.CACHE_TIMEOUT)
-                        logger.info(f"Fetched SOL price: ${price_decimal}")
+                        logger.info(f"✓ Successfully fetched SOL price: ${price_decimal}")
                         return price_decimal
+                    else:
+                        logger.warning(f"SOL price API returned invalid price: {price}")
+                else:
+                    logger.warning(f"SOL price API returned error: {response.status_code} - {response.text}")
             except Exception as e:
-                logger.warning(f"Failed to fetch SOL price from {api['url']}: {e}")
+                logger.error(f"Failed to fetch SOL price from {api['url']}: {e}", exc_info=True)
                 continue
 
-        # Fallback to demo price
-        logger.warning("Using fallback SOL price")
-        fallback_price = Decimal('20.00')
+        # Fallback to realistic demo price
+        logger.error("⚠️ WARNING: Using fallback SOL price - API failed!")
+        fallback_price = Decimal('150.00')  # More realistic fallback than $20
         cache.set(cls.SOL_CACHE_KEY, float(fallback_price), cls.CACHE_TIMEOUT)
         return fallback_price
 

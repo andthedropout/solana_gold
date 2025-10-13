@@ -20,6 +20,8 @@ from .serializers import (
     QuoteResponseSerializer,
     BuyInitiateSerializer,
     BuyConfirmSerializer,
+    SellInitiateSerializer,
+    SellConfirmSerializer,
     GoldTransactionSerializer,
     BalanceResponseSerializer,
     PriceResponseSerializer,
@@ -45,30 +47,43 @@ def get_quote(request):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    sol_amount = serializer.validated_data['sol_amount']
+    sol_amount = serializer.validated_data.get('sol_amount')
+    usd_amount = serializer.validated_data.get('usd_amount')
     action = serializer.validated_data['action']
 
     try:
-        # Get current prices
+        # Get current prices FIRST (before any calculations)
         gold_price, sol_price = PriceOracle.get_prices()
 
-        # Fee calculation for $12.50 to mint $10 gold certificate
-        # Breakdown: 84% liquidity, 8% treasury, 8% profit, 0.24% transaction fees
-        liquidity_amount = sol_amount * Decimal('0.84')
-        treasury_fee = sol_amount * Decimal('0.08')
-        profit_fee = sol_amount * Decimal('0.08')
-        transaction_fee = sol_amount * Decimal('0.0024')
-        net_sol = liquidity_amount  # Liquidity gets the main portion
+        # If USD amount provided, calculate SOL amount using this price
+        if usd_amount:
+            sol_amount = (usd_amount / sol_price).quantize(Decimal('0.000000001'))
+            logger.info(f"USD→SOL conversion: ${usd_amount} ÷ ${sol_price} = {sol_amount} SOL")
 
-        # Calculate token amount: Convert SOL → USD → gold ounces → $10 units
+        # Calculate token amount and fees based on action
         if action == 'buy':
-            usd_value = net_sol * sol_price
-            gold_ounces = usd_value / gold_price
-            token_amount = (gold_ounces * gold_price / Decimal('10')).quantize(Decimal('0.01'))
+            # Buy: $12.50 → 1 token worth $10 of gold
+            # Fee calculation: 83.76% liquidity, 8% treasury, 8% profit, 0.24% transaction = 100% total
+            liquidity_amount = (sol_amount * Decimal('0.8376')).quantize(Decimal('0.000000001'))
+            treasury_fee = (sol_amount * Decimal('0.08')).quantize(Decimal('0.000000001'))
+            profit_fee = (sol_amount * Decimal('0.08')).quantize(Decimal('0.000000001'))
+            transaction_fee = (sol_amount * Decimal('0.0024')).quantize(Decimal('0.000000001'))
+            net_sol = liquidity_amount
+
+            total_usd = sol_amount * sol_price
+            # For every $12.50 spent, user gets 1 token representing $10 of gold
+            token_amount = (total_usd / Decimal('12.5')).quantize(Decimal('0.01'))
         else:  # sell
-            usd_value = sol_amount * sol_price
-            gold_ounces = usd_value / gold_price
-            token_amount = (gold_ounces * gold_price / Decimal('10')).quantize(Decimal('0.01'))
+            # Sell: 1 token → $10 worth of SOL (no fees on redemption)
+            treasury_fee = Decimal('0')
+            profit_fee = Decimal('0')
+            transaction_fee = Decimal('0')
+            liquidity_amount = sol_amount  # Full amount returned to user
+            net_sol = sol_amount
+
+            total_usd = sol_amount * sol_price
+            # Each token represents $10 of gold value
+            token_amount = (total_usd / Decimal('10')).quantize(Decimal('0.01'))
 
         # Generate quote ID
         quote_id = generate_quote_id()
@@ -106,7 +121,7 @@ def get_quote(request):
                 'transaction': float(transaction_fee),
                 'total_fee_sol': float(total_fees),
             },
-            'net_sol_to_liquidity': float(liquidity_amount),
+            'net_sol_to_liquidity': liquidity_amount,  # Pass Decimal directly
             'exchange_rate': '1 sGOLD unit = $10 worth of gold',
             'expires_in': 30,
             'expires_at': expires_at,
@@ -116,6 +131,8 @@ def get_quote(request):
         if serializer.is_valid():
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
+            logger.error(f"QuoteResponseSerializer validation failed: {serializer.errors}")
+            logger.error(f"Response data was: {response_data}")
             return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     except Exception as e:
@@ -507,5 +524,299 @@ def get_price(request):
         logger.error(f"Error getting prices: {e}", exc_info=True)
         return Response(
             {'error': 'Failed to get prices', 'detail': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['POST'])
+def sell_initiate(request):
+    """
+    Initiate a sell transaction.
+    Creates transaction with burn instruction and SOL payout.
+
+    POST /api/v1/gold/sell/initiate
+    Body: {
+        "wallet_address": "7xK...",
+        "quote_id": "abc-123-..."
+    }
+    """
+    serializer = SellInitiateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    wallet_address = serializer.validated_data['wallet_address']
+    quote_id = serializer.validated_data['quote_id']
+
+    # Validate wallet address
+    if not validate_solana_address(wallet_address):
+        return Response(
+            {'error': 'Invalid Solana wallet address'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        # Get quote
+        quote = ExchangeQuote.objects.get(quote_id=quote_id)
+
+        # Validate quote
+        if not quote.is_valid:
+            return Response(
+                {'error': 'Quote has expired or already been used'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verify this is a sell quote
+        if quote.action != 'sell':
+            return Response(
+                {'error': 'Quote is not for selling'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Update quote with user wallet
+        quote.user_wallet = wallet_address
+        quote.save()
+
+        # Create transaction record
+        gold_tx = GoldTransaction.objects.create(
+            user_wallet=wallet_address,
+            transaction_type='sell',
+            sol_amount=quote.sol_amount,
+            token_amount=quote.token_amount,
+            gold_price_usd=quote.gold_price_usd,
+            sol_price_usd=quote.sol_price_usd,
+            treasury_fee=Decimal('0'),  # No fees on sell
+            dev_fee=Decimal('0'),
+            profit_fee=Decimal('0'),
+            transaction_fee=Decimal('0'),
+            fees_collected=Decimal('0'),
+            status='pending',
+            quote_id=quote_id,
+            quote_expires_at=quote.expires_at,
+        )
+
+        # Create sell transaction with burn + SOL transfer
+        from solana.rpc.api import Client
+        from solana.rpc.commitment import Confirmed
+        from solders.transaction import Transaction as SolanaTransaction
+        from solders.message import Message
+        import base64
+
+        service = GoldTokenService()
+        user_pubkey = Pubkey.from_string(wallet_address)
+        client = Client(settings.SOLANA_RPC_URL, commitment=Confirmed)
+
+        # Verify user has sufficient SOLGOLD balance
+        user_balance = service.get_token_balance(user_pubkey)
+        if user_balance < quote.token_amount:
+            gold_tx.mark_failed(f'Insufficient SOLGOLD balance: {user_balance} < {quote.token_amount}')
+            return Response(
+                {'error': f'Insufficient SOLGOLD balance. You have {user_balance} SOLGOLD but need {quote.token_amount}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Build ONLY burn instruction for user to sign
+        # (SOL payout will be sent by backend in a separate transaction after burn is verified)
+        from spl.token.instructions import burn, BurnParams
+        from spl.token.constants import TOKEN_PROGRAM_ID
+
+        user_ata = service.get_or_create_associated_token_account(user_pubkey)
+        token_base_units = int(quote.token_amount * Decimal('100'))
+
+        burn_instruction = burn(BurnParams(
+            program_id=TOKEN_PROGRAM_ID,
+            account=user_ata,
+            mint=service.mint_address,
+            owner=user_pubkey,
+            amount=token_base_units,
+            signers=[user_pubkey]
+        ))
+
+        # Get recent blockhash
+        recent_blockhash = client.get_latest_blockhash().value.blockhash
+
+        # Build transaction for user to sign (burn only)
+        message = Message.new_with_blockhash(
+            [burn_instruction],
+            user_pubkey,  # User pays fees and signs burn
+            recent_blockhash
+        )
+
+        # Create unsigned transaction for user to sign
+        transaction = SolanaTransaction.new_unsigned(message)
+
+        # Serialize for user to sign
+        tx_bytes = bytes(transaction)
+        serialized_tx = base64.b64encode(tx_bytes).decode('utf-8')
+
+        response_data = {
+            'exchange_id': gold_tx.id,
+            'serialized_transaction': serialized_tx,
+            'total_sgold': float(quote.token_amount),
+            'expected_sol': float(quote.sol_amount),
+            'expires_at': quote.expires_at,
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    except ExchangeQuote.DoesNotExist:
+        return Response(
+            {'error': 'Quote not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        logger.error(f"Error initiating sell: {e}", exc_info=True)
+        return Response(
+            {'error': 'Failed to initiate sell transaction', 'detail': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['POST'])
+def sell_confirm(request):
+    """
+    Confirm sell transaction with signed transaction from user.
+    Backend verifies burn and SOL payout.
+
+    POST /api/v1/gold/sell/confirm
+    Body: {
+        "exchange_id": 123,
+        "tx_signature": "signature_string..."
+    }
+    """
+    serializer = SellConfirmSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    exchange_id = serializer.validated_data['exchange_id']
+    tx_signature = serializer.validated_data['tx_signature']
+
+    try:
+        # Get transaction record
+        with db_transaction.atomic():
+            gold_tx = GoldTransaction.objects.select_for_update().get(id=exchange_id)
+
+            # Check status
+            if gold_tx.status != 'pending':
+                return Response(
+                    {'error': f'Transaction is not pending (current status: {gold_tx.status})'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Check expiration
+            if gold_tx.is_expired:
+                gold_tx.mark_failed('Quote expired')
+                return Response(
+                    {'error': 'Quote has expired'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Update status to processing
+            gold_tx.status = 'processing'
+            gold_tx.save()
+
+        # Verify transaction (burn + SOL payout)
+        try:
+            service = GoldTokenService()
+
+            logger.info(f"Verifying sell transaction: {tx_signature}")
+
+            # Wait for confirmation
+            import time
+            time.sleep(2)
+
+            # Verify burn transaction was successful
+            burn_verified = service.verify_burn_transaction(
+                tx_signature,
+                gold_tx.token_amount
+            )
+
+            if not burn_verified:
+                gold_tx.mark_failed('Failed to verify token burn on-chain')
+                return Response(
+                    {'error': 'Failed to verify token burn'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Send SOL to user from liquidity wallet
+            user_pubkey = Pubkey.from_string(gold_tx.user_wallet)
+            logger.info(f"Sending {gold_tx.sol_amount} SOL to user {user_pubkey}")
+
+            from solana.rpc.api import Client
+            from solders.system_program import transfer, TransferParams
+            from solders.message import Message
+
+            client = Client(settings.SOLANA_RPC_URL)
+
+            # Create SOL transfer from liquidity wallet to user
+            transfer_instruction = transfer(TransferParams(
+                from_pubkey=service.mint_authority.pubkey(),  # liquidity wallet
+                to_pubkey=user_pubkey,
+                lamports=int(gold_tx.sol_amount * Decimal('1000000000'))
+            ))
+
+            # Get recent blockhash
+            recent_blockhash = client.get_latest_blockhash().value.blockhash
+
+            # Build and sign transaction with liquidity wallet
+            message = Message.new_with_blockhash(
+                [transfer_instruction],
+                service.mint_authority.pubkey(),  # liquidity wallet pays and signs
+                recent_blockhash
+            )
+
+            # Sign and send transaction
+            sol_transfer_tx = SolanaTransaction([service.mint_authority], message, recent_blockhash)
+            tx_bytes = bytes(sol_transfer_tx)
+            sol_transfer_result = client.send_raw_transaction(tx_bytes)
+            sol_transfer_signature = str(sol_transfer_result.value)
+
+            logger.info(f"SOL transfer completed: {sol_transfer_signature}")
+
+            # Get user's ATA
+            user_ata = service.get_or_create_associated_token_account(user_pubkey)
+
+            # Update transaction record
+            gold_tx.tx_signature = tx_signature
+            gold_tx.user_token_account = str(user_ata)
+            gold_tx.status = 'completed'
+            gold_tx.completed_at = timezone.now()
+            gold_tx.status_message = f'Sold {gold_tx.token_amount} SOLGOLD for {gold_tx.sol_amount} SOL (payout: {sol_transfer_signature})'
+
+            try:
+                gold_tx.save()
+            except Exception as save_error:
+                logger.error(f"Failed to save transaction: {save_error}")
+                raise
+
+            # Mark quote as used
+            if gold_tx.quote_id:
+                ExchangeQuote.objects.filter(quote_id=gold_tx.quote_id).update(used=True)
+
+            return Response({
+                'status': 'completed',
+                'tx_signature': tx_signature,
+                'sgold_burned': float(gold_tx.token_amount),
+                'sol_received': float(gold_tx.sol_amount),
+                'user_ata': str(user_ata),
+                'message': f'Successfully sold {gold_tx.token_amount} SOLGOLD for {gold_tx.sol_amount} SOL'
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error(f"Error processing sell transaction: {e}", exc_info=True)
+            gold_tx.mark_failed(f'Error processing transaction: {str(e)}')
+            return Response(
+                {'error': 'Failed to process transaction', 'detail': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    except GoldTransaction.DoesNotExist:
+        return Response(
+            {'error': 'Transaction not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        logger.error(f"Error confirming sell: {e}", exc_info=True)
+        return Response(
+            {'error': 'Failed to confirm transaction', 'detail': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )

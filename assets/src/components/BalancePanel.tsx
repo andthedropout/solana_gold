@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useWallet } from '@/components/WalletContextProvider';
 import { goldExchangeService } from '@/services/goldExchange';
 import { RefreshCw, Coins, Wallet } from 'lucide-react';
@@ -11,7 +11,7 @@ export const BalancePanel: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async () => {
     if (!publicKey) return;
 
     try {
@@ -25,7 +25,7 @@ export const BalancePanel: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [publicKey]);
 
   const fetchPrices = async () => {
     try {
@@ -40,8 +40,18 @@ export const BalancePanel: React.FC = () => {
     fetchBalance();
     fetchPrices();
     const interval = setInterval(fetchPrices, 60000); // Update prices every minute
-    return () => clearInterval(interval);
-  }, [publicKey]);
+
+    // Listen for balance update events from ExchangePanel
+    const handleBalanceUpdate = () => {
+      fetchBalance();
+    };
+    window.addEventListener('balanceUpdate', handleBalanceUpdate);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('balanceUpdate', handleBalanceUpdate);
+    };
+  }, [publicKey, fetchBalance]);
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -140,10 +150,6 @@ export const BalancePanel: React.FC = () => {
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">SOL</span>
                 <span className="font-medium text-foreground">{formatCurrency(prices.sol_price_usd)}</span>
-              </div>
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">1 SOLGOLD</span>
-                <span className="font-medium text-foreground">$10 worth of gold</span>
               </div>
             </div>
           )}

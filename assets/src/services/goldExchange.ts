@@ -5,6 +5,8 @@ import type {
   Quote,
   BuyInitiateResponse,
   BuyConfirmResponse,
+  SellInitiateResponse,
+  SellConfirmResponse,
   BalanceResponse,
   PriceResponse,
   ApiError,
@@ -52,12 +54,22 @@ class GoldExchangeService {
 
   /**
    * Get a quote for buying/selling gold tokens
+   * @param amount - Amount to exchange
+   * @param action - 'buy' or 'sell'
+   * @param amountType - 'usd' or 'sol' (defaults to 'sol' for backwards compatibility)
    */
   async getQuote(
-    solAmount: number,
-    action: 'buy' | 'sell' = 'buy'
+    amount: number,
+    action: 'buy' | 'sell' = 'buy',
+    amountType: 'usd' | 'sol' = 'sol'
   ): Promise<Quote> {
     const csrfToken = await this.ensureCsrfToken();
+
+    // Build request body based on amount type
+    const requestBody = amountType === 'usd'
+      ? { usd_amount: amount.toString(), action }
+      : { sol_amount: amount.toString(), action };
+
     const response = await fetch(`${this.baseUrl}/quote`, {
       method: 'POST',
       headers: {
@@ -65,10 +77,7 @@ class GoldExchangeService {
         'X-CSRFToken': csrfToken || '',
       },
       credentials: 'include',
-      body: JSON.stringify({
-        sol_amount: solAmount.toString(),
-        action,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -132,6 +141,64 @@ class GoldExchangeService {
     if (!response.ok) {
       const error: ApiError = await response.json();
       throw new Error(error.error || 'Failed to confirm buy');
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Initiate a sell transaction
+   */
+  async initiateSell(
+    walletAddress: string,
+    quoteId: string
+  ): Promise<SellInitiateResponse> {
+    const csrfToken = await this.ensureCsrfToken();
+    const response = await fetch(`${this.baseUrl}/sell/initiate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken || '',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        wallet_address: walletAddress,
+        quote_id: quoteId,
+      }),
+    });
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.error || 'Failed to initiate sell');
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Confirm sell transaction with transaction signature
+   */
+  async confirmSell(
+    exchangeId: number,
+    txSignature: string
+  ): Promise<SellConfirmResponse> {
+    const csrfToken = await this.ensureCsrfToken();
+    const response = await fetch(`${this.baseUrl}/sell/confirm`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken || '',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        exchange_id: exchangeId,
+        tx_signature: txSignature,
+      }),
+    });
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.error || 'Failed to confirm sell');
     }
 
     return response.json();

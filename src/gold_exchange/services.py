@@ -43,7 +43,8 @@ class GoldTokenService:
         # System wallets
         self.treasury_wallet = Pubkey.from_string(settings.TREASURY_WALLET)
         self.dev_fund_wallet = Pubkey.from_string(settings.DEV_FUND_WALLET)
-        self.liquidity_wallet = Pubkey.from_string(settings.LIQUIDITY_WALLET)
+        # Liquidity wallet is the same as mint authority (combined for devnet simplicity)
+        self.liquidity_wallet = self.mint_authority.pubkey()
         self.profit_wallet = Pubkey.from_string(settings.PROFIT_WALLET)
         self.transaction_fee_wallet = Pubkey.from_string(settings.TRANSACTION_FEE_WALLET)
 
@@ -64,22 +65,22 @@ class GoldTokenService:
         """
         Calculate sGOLD token amount from SOL amount.
 
+        Formula: $12.50 → 1 token worth $10 of gold
+        tokens = (total_usd / 12.5)
+
         Args:
             sol_amount: Amount of SOL
-            gold_price_usd: Current gold price per troy ounce in USD
+            gold_price_usd: Current gold price per troy ounce in USD (unused but kept for compatibility)
             sol_price_usd: Current SOL price in USD
 
         Returns:
-            Token amount (100 units = $10.00 worth of gold)
+            Token amount where 1 token = $10 worth of gold
         """
         # Convert SOL to USD
-        usd_value = sol_amount * sol_price_usd
+        total_usd = sol_amount * sol_price_usd
 
-        # Calculate how much gold in troy ounces
-        gold_ounces = usd_value / gold_price_usd
-
-        # Convert to $10 units (1 token = $10 of gold)
-        token_amount = gold_ounces * gold_price_usd / Decimal('10')
+        # For every $12.50 spent, user gets 1 token representing $10 of gold
+        token_amount = total_usd / Decimal('12.5')
 
         return token_amount.quantize(Decimal('0.01'))
 
@@ -89,15 +90,19 @@ class GoldTokenService:
         """
         Calculate SOL amount from sGOLD token amount.
 
+        Formula: 1 token → $10 in SOL
+        (When buying: pay $12.50, get 1 token worth $10)
+        (When selling: sell 1 token worth $10, receive $10)
+
         Args:
             token_amount: Amount of sGOLD tokens
-            gold_price_usd: Current gold price per troy ounce in USD
+            gold_price_usd: Current gold price per troy ounce in USD (unused but kept for compatibility)
             sol_price_usd: Current SOL price in USD
 
         Returns:
             SOL amount
         """
-        # Convert tokens to USD ($10 per token unit)
+        # Convert tokens to USD ($10 per token - the actual gold value)
         usd_value = token_amount * Decimal('10')
 
         # Convert USD to SOL
@@ -118,8 +123,8 @@ class GoldTokenService:
         Returns:
             Tuple of (treasury_fee, profit_fee, transaction_fee, liquidity_amount)
         """
-        # Fee structure: 84% liquidity, 8% treasury, 8% profit, 0.24% transaction
-        liquidity_rate = Decimal('0.84')
+        # Fee structure: 83.76% liquidity, 8% treasury, 8% profit, 0.24% transaction = 100%
+        liquidity_rate = Decimal('0.8376')
         treasury_rate = Decimal('0.08')
         profit_rate = Decimal('0.08')
         transaction_rate = Decimal('0.0024')
@@ -371,3 +376,131 @@ class GoldTokenService:
         except Exception as e:
             logger.error(f"Error getting token balance for {user_pubkey}: {e}", exc_info=True)
             return Decimal('0')
+
+    def create_sell_transaction_instructions(
+        self,
+        user_pubkey: Pubkey,
+        token_amount: Decimal,
+        sol_payout: Decimal,
+    ) -> list:
+        """
+        Create instructions for sell transaction.
+        User burns SOLGOLD tokens and receives SOL from liquidity wallet.
+
+        Args:
+            user_pubkey: User's wallet public key
+            token_amount: Amount of SOLGOLD tokens to burn
+            sol_payout: Amount of SOL to send to user
+
+        Returns:
+            List of transaction instructions
+        """
+        instructions = []
+
+        # Get user's ATA
+        user_ata = self.get_or_create_associated_token_account(user_pubkey)
+
+        # Convert token amount to base units (2 decimals)
+        token_base_units = int(token_amount * Decimal('100'))
+
+        # Instruction 1: Burn tokens from user's ATA
+        instructions.append(
+            burn(
+                BurnParams(
+                    program_id=TOKEN_PROGRAM_ID,
+                    account=user_ata,
+                    mint=self.mint_address,
+                    owner=user_pubkey,
+                    amount=token_base_units,
+                    signers=[user_pubkey]
+                )
+            )
+        )
+
+        # Instruction 2: Transfer SOL from liquidity wallet to user
+        # This will be signed by the backend's liquidity wallet (mint authority)
+        def to_lamports(sol: Decimal) -> int:
+            return int(sol * Decimal('1000000000'))
+
+        if sol_payout > 0:
+            instructions.append(
+                transfer(
+                    TransferParams(
+                        from_pubkey=self.liquidity_wallet,
+                        to_pubkey=user_pubkey,
+                        lamports=to_lamports(sol_payout)
+                    )
+                )
+            )
+
+        return instructions
+
+    def burn_tokens_from_user(
+        self,
+        user_pubkey: Pubkey,
+        token_amount: Decimal,
+    ) -> str:
+        """
+        Burn sGOLD tokens from user's associated token account.
+        NOTE: This requires the user to have already signed the burn instruction.
+        This method is mainly for verification purposes.
+
+        Args:
+            user_pubkey: User's wallet public key
+            token_amount: Amount of tokens to burn (in token units, e.g., 100.00)
+
+        Returns:
+            Transaction signature
+        """
+        # Get user's ATA
+        user_ata = self.get_or_create_associated_token_account(user_pubkey)
+
+        # Verify the user has sufficient balance
+        current_balance = self.get_token_balance(user_pubkey)
+        if current_balance < token_amount:
+            raise ValueError(f"Insufficient token balance: {current_balance} < {token_amount}")
+
+        logger.info(f"User {user_pubkey} burning {token_amount} sGOLD from {user_ata}")
+
+        # NOTE: Actual burn happens in the sell transaction which user signs
+        # This method is primarily for logging and validation
+        return "burn_will_happen_in_user_signed_transaction"
+
+    def verify_burn_transaction(self, tx_signature: str, expected_token_amount: Decimal) -> bool:
+        """
+        Verify that token burn was completed on-chain.
+
+        Args:
+            tx_signature: Transaction signature to verify
+            expected_token_amount: Expected token amount burned
+
+        Returns:
+            True if burn is verified
+        """
+        try:
+            # Convert string signature to Signature object
+            sig = Signature.from_string(tx_signature)
+
+            # Get transaction details
+            tx_info = self.client.get_transaction(
+                sig,
+                encoding="json",
+                max_supported_transaction_version=0
+            )
+
+            if not tx_info.value:
+                logger.warning(f"Transaction not found: {tx_signature}")
+                return False
+
+            # Verify transaction succeeded
+            if tx_info.value.transaction.meta.err is not None:
+                logger.warning(f"Transaction failed: {tx_signature}")
+                return False
+
+            # TODO: Add more detailed verification of burn instruction
+
+            return True
+
+        except Exception as e:
+            logger.error(f"Error verifying burn transaction {tx_signature}: {e}")
+            return False

@@ -9,14 +9,38 @@ class QuoteRequestSerializer(serializers.Serializer):
         max_digits=20,
         decimal_places=9,
         min_value=Decimal('0.001'),
-        required=True,
-        help_text="Amount of SOL to exchange"
+        required=False,
+        help_text="Amount of SOL to exchange (use either sol_amount or usd_amount)"
+    )
+    usd_amount = serializers.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        min_value=Decimal('0.01'),
+        required=False,
+        help_text="Amount of USD to spend (use either sol_amount or usd_amount)"
     )
     action = serializers.ChoiceField(
         choices=['buy', 'sell'],
         required=True,
         help_text="Action type: buy or sell"
     )
+
+    def validate(self, attrs):
+        """Ensure either sol_amount or usd_amount is provided, but not both"""
+        sol_amount = attrs.get('sol_amount')
+        usd_amount = attrs.get('usd_amount')
+
+        if not sol_amount and not usd_amount:
+            raise serializers.ValidationError(
+                "Either 'sol_amount' or 'usd_amount' must be provided"
+            )
+
+        if sol_amount and usd_amount:
+            raise serializers.ValidationError(
+                "Cannot specify both 'sol_amount' and 'usd_amount'. Choose one."
+            )
+
+        return attrs
 
 
 class QuoteResponseSerializer(serializers.Serializer):
@@ -112,3 +136,30 @@ class PriceResponseSerializer(serializers.Serializer):
     sol_price_usd = serializers.DecimalField(max_digits=10, decimal_places=2)
     sgold_value_sol = serializers.DecimalField(max_digits=20, decimal_places=9)
     last_updated = serializers.DateTimeField()
+
+
+class SellInitiateSerializer(serializers.Serializer):
+    """Initiate a sell transaction"""
+    wallet_address = serializers.CharField(
+        max_length=44,
+        min_length=32,
+        required=True,
+        help_text="User's Solana wallet address"
+    )
+    quote_id = serializers.CharField(
+        max_length=36,
+        required=True,
+        help_text="Quote ID from previous quote request"
+    )
+
+
+class SellConfirmSerializer(serializers.Serializer):
+    """Confirm a sell transaction with transaction signature"""
+    exchange_id = serializers.IntegerField(
+        required=True,
+        help_text="Exchange transaction ID"
+    )
+    tx_signature = serializers.CharField(
+        required=True,
+        help_text="Transaction signature from wallet"
+    )
